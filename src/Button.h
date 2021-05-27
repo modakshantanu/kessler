@@ -28,12 +28,12 @@ public:
     TextButton() {}
 
     TextButton(int x, int y, int w, int h, string text) {
-        this->x = x;
-        this->y = y;
-        this->w = w;
-        this->h = h;
+        this->x = x * uiScale;
+        this->y = y * uiScale;
+        this->w = w * uiScale;
+        this->h = h * uiScale;
         this->text = text;
-        borderWidth = GetScreenHeight() / 200;
+        borderWidth = 4 * uiScale;
         // borderWidth = screenHeight; // GetScreenHeight() / 200;
     }
 
@@ -46,9 +46,16 @@ public:
 
         Color borderColor = isMouseHovering ? activeBorderColor : inactiveBorderColor; 
         Color BGColor = isPressed ? activeBGColor : inactiveBGColor; 
+        Color fontColor = isPressed ? inactiveBGColor : activeBGColor;
 
         DrawRectangle(x, y, w, h, borderColor);
         DrawRectangle(x + borderWidth, y + borderWidth, w - 2*borderWidth, h - 2*borderWidth, BGColor);
+
+        int fontSize = 32 * uiScale;
+        int textX = (2*x + w) / 2 -  MeasureText(text.c_str(), fontSize) / 2;
+        int textY = y + (h - fontSize) / 2;
+
+        DrawText(text.c_str(), textX, textY, fontSize, fontColor);
         
     }
 
@@ -61,18 +68,18 @@ public:
     }
 
 
-    static void buttonStateHandler(std::vector<TextButton>& buttons, int mouseX, int mouseY, bool up, bool down, bool pressed, bool released) {
-        for (auto &e: buttons) {
-            bool intersects = e.intersects(mouseX, mouseY); 
-            if (pressed && intersects) {
-                e.isPressed = true;
-            } else if (released && e.isPressed) {
-                e.onClick();
-            }
-            if (!intersects || !down) {
-                e.isPressed = false;
-            }
+    static void buttonStateHandler(TextButton &button, int mouseX, int mouseY, bool up, bool down, bool pressed, bool released) {
+        
+        bool intersects = button.intersects(mouseX, mouseY); 
+        if (pressed && intersects) {
+            button.isPressed = true;
+        } else if (released && button.isPressed) {
+            button.onClick();
         }
+        if (!intersects || !down) {
+            button.isPressed = false;
+        }
+        
     }
 };
 

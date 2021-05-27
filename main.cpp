@@ -1,6 +1,7 @@
 
 
 #include "raylib.h"
+#include "src/Scene.h"
 #include "src/MainMenu.h"
 #include "src/utils.h"
 
@@ -9,17 +10,27 @@ namespace Win {
 }
 
 bool debug = true;
+float uiScale = 1.0;
+int screenWidth;
+int screenHeight;
+
+
+MainMenu mainMenu;
+GameScene gameScene;
+Scene* curScene, *nextScene; 
+
 int main() {
     
-    const int screenWidth = 1280;
-    const int screenHeight = 720;
+    screenWidth = 1280;
+    screenHeight = 720;
 
     InitWindow(screenWidth, screenHeight, "raylib");
 
     SetTargetFPS(60);             
     SetExitKey(KEY_ESCAPE);
 
-    MainMenu m = MainMenu();
+    mainMenu = MainMenu();
+    curScene = &mainMenu;
     // ToggleFullscreen();
 
     if (debug) {
@@ -38,8 +49,11 @@ int main() {
 
         ClearBackground(BLACK);
 
-        m.update();
-        m.render();
+        nextScene = curScene->update();
+        curScene->render();
+        curScene = nextScene;
+
+        
         DrawFPS(10, 10);
         EndDrawing();
         //----------------------------------------------------------------------------------
