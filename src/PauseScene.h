@@ -55,6 +55,7 @@ public:
 
         buttons[2].onClick = []() {
             nextScene = (Scene*) mainMenu;
+            gameScene->reset();
         };
     }   
     
@@ -70,6 +71,11 @@ public:
 
         for (auto &e: buttons) {
             TextButton::buttonStateHandler(e, mouseX, mouseY, mouseUp, mouseDown, mousePressed, mouseReleased);
+        }
+
+        bool esc = IsKeyPressed(KEY_ESCAPE);
+        if (esc) {
+            nextScene = (Scene*) gameScene;
         }
 
     }

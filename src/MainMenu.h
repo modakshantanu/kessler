@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include "Scene.h"
 #include "Button.h"
+#include "TextView.h"
 #include "utils.h"
 
 #include <queue>
@@ -17,9 +18,16 @@ extern Scene* curScene, *nextScene;
 class GameScene;
 extern GameScene* gameScene;
 
+class InstructionsScene;
+extern InstructionsScene* instructionsScene;
+
+class SettingsScene;
+extern SettingsScene* settingsScene;
+
 class MainMenu : public Scene {
 private:
     std::vector<TextButton> buttons; 
+    std::vector<TextView> textViews; 
 
 public:
 
@@ -48,9 +56,19 @@ public:
             nextScene = (Scene*) gameScene;
         };
 
+        buttons[1].onClick = []() {
+            nextScene = (Scene*) settingsScene;
+        };
+
+        buttons[2].onClick = []() {
+            nextScene = (Scene*) instructionsScene;
+        };
+
         buttons[3].onClick = []() {
             std::exit(0);
         };
+
+        textViews.push_back(TextView("Kessler" , centerX, screenHeight * 0.1, 96, TOP, CENTER));
     }   
     
 
@@ -67,15 +85,27 @@ public:
             TextButton::buttonStateHandler(e, mouseX, mouseY, mouseUp, mouseDown, mousePressed, mouseReleased);
         }
 
+
+        bool esc = IsKeyPressed(KEY_ESCAPE);
+        if (esc) {
+            std::exit(0);
+        }
+
     }
 
     void render() {
 
         // BeginDrawing();
         ClearBackground(BLACK);
+
         for (auto &e: buttons) {
             e.render();
         }
+
+        for (auto &e: textViews) {
+            e.render();
+        }
+
         DrawFPS(10, 10);
         // EndDrawing();
     }

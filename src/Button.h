@@ -13,6 +13,8 @@ using namespace std;
 
 extern float uiScale;
 
+void doNothing() {}
+
 class TextButton : public UIElement{
 public:
     int x;
@@ -25,7 +27,11 @@ public:
     Color activeBGColor = BLUE;
     Color inactiveBGColor = BLACK;
     int borderWidth = 5;
-    bool isPressed = false;    
+    bool isPressed = false;
+
+    void (*onClick)() = doNothing;
+    void (*onHover)() = doNothing;
+
     TextButton() {}
 
     TextButton(int x, int y, int w, int h, string text) {

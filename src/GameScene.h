@@ -90,7 +90,7 @@ public:
         if (math::intersects(rightRect, ball)) dBall.x = -dBall.x;
 
 
-        if (IsKeyDown(KEY_ESCAPE)) {
+        if (IsKeyPressed(KEY_ESCAPE)) {
             nextScene = (Scene*) pauseScene;
         }
 

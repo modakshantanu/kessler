@@ -6,12 +6,16 @@
 #include "src/MainMenu.h"
 #include "src/GameScene.h"
 #include "src/PauseScene.h"
+#include "src/InstructionsScene.h"
+#include "src/SettingsScene.h"
+
+#include "src/Settings.h"
 
 namespace Win {
     #include "windows.h"
 }
 
-bool debug = true;
+bool debug = false;
 
 
 extern int screenWidth;
@@ -20,12 +24,18 @@ extern float uiScale;
 extern GameScene* gameScene;
 extern PauseScene* pauseScene;
 extern MainMenu* mainMenu;
+extern InstructionsScene* instructionsScene;
+extern SettingsScene* settingsScene;
+
 extern Scene* curScene, *nextScene; 
+extern Settings settings;
 
 int main() {
     
     screenWidth = 1280;
     screenHeight = 720;
+    // screenWidth = 1920;
+    // screenHeight = 1080;
 
     InitWindow(screenWidth, screenHeight, "Kessler");
 
@@ -36,6 +46,8 @@ int main() {
     mainMenu = new MainMenu();
     gameScene = new GameScene();
     pauseScene = new PauseScene();
+    settingsScene = new SettingsScene();
+    instructionsScene = new InstructionsScene();
 
 
     curScene = mainMenu;
@@ -47,12 +59,14 @@ int main() {
     }
 
     while (!WindowShouldClose()) {
+
         curScene->update();
+
         BeginDrawing();
         curScene->render();
         EndDrawing();
-        curScene = nextScene;
 
+        curScene = nextScene;
     }
 
 
