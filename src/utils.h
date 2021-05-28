@@ -4,12 +4,23 @@
 
 #include<bits/stdc++.h>
 #include "raylib.h"
+// #include "MainMenu.h"
+#include "Scene.h"
+#include "GameScene.h"
 
 using namespace std;
 
 
-extern float uiScale;
-extern int screenWidth;
-extern int screenHeight;
+float uiScale = 1.0;
+
+Scene* curScene, *nextScene; 
+int screenWidth,screenHeight;
+
+class MainMenu;
+MainMenu* mainMenu;
+
+class GameScene;
+GameScene* gameScene;
+
 
 #endif

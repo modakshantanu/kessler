@@ -1,62 +1,53 @@
 
 
 #include "raylib.h"
+#include "src/utils.h"
 #include "src/Scene.h"
 #include "src/MainMenu.h"
-#include "src/utils.h"
+#include "src/GameScene.h"
 
 namespace Win {
     #include "windows.h"
 }
 
 bool debug = true;
-float uiScale = 1.0;
-int screenWidth;
-int screenHeight;
 
 
-MainMenu mainMenu;
-GameScene gameScene;
-Scene* curScene, *nextScene; 
+extern int screenWidth;
+extern int screenHeight;
+extern float uiScale;
+extern MainMenu* mainMenu;
+extern GameScene* gameScene;
+extern Scene* curScene, *nextScene; 
 
 int main() {
     
     screenWidth = 1280;
     screenHeight = 720;
 
-    InitWindow(screenWidth, screenHeight, "raylib");
+    InitWindow(screenWidth, screenHeight, "Kessler");
 
-    SetTargetFPS(60);             
-    SetExitKey(KEY_ESCAPE);
+    SetTargetFPS(60);            
+    SetExitKey(KEY_NULL);
+    SetConfigFlags(FLAG_VSYNC_HINT);
 
-    mainMenu = MainMenu();
-    curScene = &mainMenu;
-    // ToggleFullscreen();
+    mainMenu = new MainMenu();
+    gameScene = new GameScene();
+
+
+    curScene = mainMenu;
+    nextScene = mainMenu;
 
     if (debug) {
         Win::AllocConsole();
         freopen("CONOUT$", "w", stdout);
     }
 
-
-    
-
     while (!WindowShouldClose()) {
-        
-
-
-        BeginDrawing();
-
-        ClearBackground(BLACK);
-
-        nextScene = curScene->update();
+        curScene->update();
         curScene->render();
         curScene = nextScene;
 
-        
-        DrawFPS(10, 10);
-        EndDrawing();
-        //----------------------------------------------------------------------------------
     }
 
 

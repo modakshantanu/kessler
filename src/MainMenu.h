@@ -13,7 +13,10 @@
 
 void (*fun_ptr)(void);
 extern int screenHeight, screenWidth;
+extern Scene* curScene, *nextScene; 
 
+class GameScene;
+extern GameScene* gameScene;
 
 class MainMenu : public Scene {
 private:
@@ -38,17 +41,21 @@ public:
 
         buttons[0].text = "Play";
         buttons[1].text = "Settings";
-        buttons[2].text = "Help";
+        buttons[2].text = "Instructions";
         buttons[3].text = "Exit";
 
 
         buttons[0].onClick = []() {
-            
+            nextScene = gameScene;
+        };
+
+        buttons[3].onClick = []() {
+            std::exit(0);
         };
     }   
     
 
-    Scene* update() {
+    void update() {
         int mouseX = GetMouseX();
         int mouseY = GetMouseY();
         int mousePressed = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
@@ -61,17 +68,17 @@ public:
             TextButton::buttonStateHandler(e, mouseX, mouseY, mouseUp, mouseDown, mousePressed, mouseReleased);
         }
 
-        
-
-
-
-        return this;
     }
 
     void render() {
+
+        BeginDrawing();
+        ClearBackground(BLACK);
         for (auto &e: buttons) {
             e.render();
         }
+        DrawFPS(10, 10);
+        EndDrawing();
     }
 };
 

@@ -11,6 +11,7 @@
 
 using namespace std;
 
+extern float uiScale;
 
 class TextButton : public UIElement{
 public:
