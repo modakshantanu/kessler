@@ -4,9 +4,8 @@
 
 #include<bits/stdc++.h>
 #include "raylib.h"
-// #include "MainMenu.h"
+#include "MainMenu.h"
 #include "Scene.h"
-#include "GameScene.h"
 
 using namespace std;
 
@@ -22,5 +21,7 @@ MainMenu* mainMenu;
 class GameScene;
 GameScene* gameScene;
 
-
+class PauseScene;
+PauseScene* pauseScene;
+// 
 #endif

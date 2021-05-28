@@ -11,7 +11,6 @@
 
 
 
-void (*fun_ptr)(void);
 extern int screenHeight, screenWidth;
 extern Scene* curScene, *nextScene; 
 
@@ -46,7 +45,7 @@ public:
 
 
         buttons[0].onClick = []() {
-            nextScene = gameScene;
+            nextScene = (Scene*) gameScene;
         };
 
         buttons[3].onClick = []() {
@@ -72,17 +71,14 @@ public:
 
     void render() {
 
-        BeginDrawing();
+        // BeginDrawing();
         ClearBackground(BLACK);
         for (auto &e: buttons) {
             e.render();
         }
         DrawFPS(10, 10);
-        EndDrawing();
+        // EndDrawing();
     }
 };
-
-int a = 10;
-int b = 5;
 
 #endif

@@ -9,8 +9,8 @@
 extern int screenHeight, screenWidth;
 extern float uiScale;
 
-class MainMenu;
 extern MainMenu* mainMenu; 
+extern PauseScene* pauseScene; 
 
 extern Scene* curScene, *nextScene; 
 
@@ -39,6 +39,18 @@ public:
 
     }
 
+
+    void reset() {
+        float padding = 20 * screenWidth / 1280.0;
+
+        left = {padding, (float) screenHeight / 2};
+        right = {screenWidth - padding, (float) screenHeight / 2};
+        ball = {screenWidth / 2.0f, screenHeight / 2.0f};
+
+        dLeft = {0,0};
+        dRight = {0,0};
+        dBall = {3,3};
+    }
 
     void update() {
         bool leftUp = IsKeyDown(KEY_A);
@@ -79,13 +91,13 @@ public:
 
 
         if (IsKeyDown(KEY_ESCAPE)) {
-            nextScene = (Scene*) mainMenu;
+            nextScene = (Scene*) pauseScene;
         }
 
     }
 
     void render() {
-        BeginDrawing();
+        // BeginDrawing();
         ClearBackground(BLACK);
 
         Rectangle leftRect = {left.x - paddleWidth / 2 , left.y - paddleHeight / 2, paddleWidth, paddleHeight};
@@ -97,7 +109,7 @@ public:
         DrawCircleV(ball, 8, BLUE);
 
         DrawFPS(10, 10);
-        EndDrawing();
+        // EndDrawing();
     }
 };
 

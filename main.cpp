@@ -5,6 +5,7 @@
 #include "src/Scene.h"
 #include "src/MainMenu.h"
 #include "src/GameScene.h"
+#include "src/PauseScene.h"
 
 namespace Win {
     #include "windows.h"
@@ -16,8 +17,9 @@ bool debug = true;
 extern int screenWidth;
 extern int screenHeight;
 extern float uiScale;
-extern MainMenu* mainMenu;
 extern GameScene* gameScene;
+extern PauseScene* pauseScene;
+extern MainMenu* mainMenu;
 extern Scene* curScene, *nextScene; 
 
 int main() {
@@ -33,6 +35,7 @@ int main() {
 
     mainMenu = new MainMenu();
     gameScene = new GameScene();
+    pauseScene = new PauseScene();
 
 
     curScene = mainMenu;
@@ -45,7 +48,9 @@ int main() {
 
     while (!WindowShouldClose()) {
         curScene->update();
+        BeginDrawing();
         curScene->render();
+        EndDrawing();
         curScene = nextScene;
 
     }
