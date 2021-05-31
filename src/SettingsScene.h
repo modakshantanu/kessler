@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "TextView.h"
 #include "Button.h"
+#include "OptionsView.h"
 #include <bits/stdc++.h>
 
 extern int screenHeight, screenWidth;
@@ -18,6 +19,8 @@ class SettingsScene : public Scene {
 public:
     TextView title;
     TextButton backButton;
+    vector<OptionButton> opts;
+    OptionsView optView;
 
     SettingsScene() {
 
@@ -34,6 +37,13 @@ public:
             nextScene = (Scene*) mainMenu;
         };
 
+        optView = OptionsView("Resolution: ", centerX - 300, 300);
+        optView.addOption("1920x1080");
+        optView.addOption("2560x1440");
+
+        optView.onChange = [](std::string id) {
+            cout<<id<<endl;
+        };
 
     }
 
@@ -48,10 +58,14 @@ public:
         int mouseDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
         TextButton::buttonStateHandler(backButton, mouseX, mouseY, mouseUp, mouseDown, mousePressed, mouseReleased);
         
+        optView.update();
+
         bool esc = IsKeyPressed(KEY_ESCAPE);
         if (esc) {
             nextScene = (Scene*) mainMenu;
         }
+
+
 
     }
 
@@ -60,6 +74,11 @@ public:
         ClearBackground(BLACK);
         backButton.render();
         title.render();
+        for (auto &e: opts) {
+            e.render();
+        }
+
+        optView.render();
     }
 };
 

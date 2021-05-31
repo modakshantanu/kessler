@@ -59,7 +59,6 @@ int main() {
     }
 
     while (!WindowShouldClose()) {
-
         curScene->update();
 
         BeginDrawing();
