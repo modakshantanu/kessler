@@ -5,9 +5,10 @@
 #include "Scene.h"
 #include "TextView.h"
 #include "Button.h"
+#include "Settings.h"
 #include <bits/stdc++.h>
 
-extern int screenHeight, screenWidth;
+extern Settings settings;
 extern float uiScale;
 extern Scene* curScene, *nextScene; 
 
@@ -20,7 +21,7 @@ public:
 
     InstructionsScene() {
 
-        int centerX = screenWidth / 2;
+        int centerX = settings.screenWidth / 2;
         int buttonWidth = 200 * uiScale;
         int buttonHeight = 50 * uiScale;
         backButton = TextButton(25, 25, buttonWidth, buttonHeight, "Back"); 

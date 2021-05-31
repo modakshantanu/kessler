@@ -17,9 +17,6 @@ namespace Win {
 
 bool debug = false;
 
-
-extern int screenWidth;
-extern int screenHeight;
 extern float uiScale;
 extern GameScene* gameScene;
 extern PauseScene* pauseScene;
@@ -31,13 +28,14 @@ extern Scene* curScene, *nextScene;
 extern Settings settings;
 
 int main() {
-    
-    screenWidth = 1280;
-    screenHeight = 720;
+    // debug = true;
+
+    settings = loadSettings("kessler_settings.txt");
+
     // screenWidth = 1920;
     // screenHeight = 1080;
 
-    InitWindow(screenWidth, screenHeight, "Kessler");
+    InitWindow(settings.screenWidth, settings.screenHeight, "Kessler");
 
     SetTargetFPS(60);            
     SetExitKey(KEY_NULL);
@@ -57,7 +55,6 @@ int main() {
         Win::AllocConsole();
         freopen("CONOUT$", "w", stdout);
     }
-
     while (!WindowShouldClose()) {
         curScene->update();
 

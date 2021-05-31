@@ -5,8 +5,9 @@
 #include "mathutils.h"
 #include "utils.h"
 #include "Scene.h"
+#include "Settings.h"
 
-extern int screenHeight, screenWidth;
+extern Settings settings;
 extern float uiScale;
 
 extern MainMenu* mainMenu; 
@@ -25,13 +26,14 @@ public:
     Vector2 dLeft, dRight, dBall;
 
     GameScene() {
-        float padding = 20 * screenWidth / 1280.0;
-        paddleWidth *= screenWidth / 1280.0;
-        paddleHeight *= screenWidth / 1280.0;
 
-        left = {padding, (float) screenHeight / 2};
-        right = {screenWidth - padding, (float) screenHeight / 2};
-        ball = {screenWidth / 2.0f, screenHeight / 2.0f};
+        float padding = 20 * settings.screenWidth / 1280.0;
+        paddleWidth *= settings.screenWidth / 1280.0;
+        paddleHeight *= settings.screenWidth / 1280.0;
+
+        left = {padding, (float) settings.screenHeight / 2};
+        right = {settings.screenWidth - padding, (float) settings.screenHeight / 2};
+        ball = {settings.screenWidth / 2.0f, settings.screenHeight / 2.0f};
 
         dLeft = {0,0};
         dRight = {0,0};
@@ -41,11 +43,11 @@ public:
 
 
     void reset() {
-        float padding = 20 * screenWidth / 1280.0;
+        float padding = 20 * settings.screenWidth / 1280.0;
 
-        left = {padding, (float) screenHeight / 2};
-        right = {screenWidth - padding, (float) screenHeight / 2};
-        ball = {screenWidth / 2.0f, screenHeight / 2.0f};
+        left = {padding, (float) settings.screenHeight / 2};
+        right = {settings.screenWidth - padding, (float) settings.screenHeight / 2};
+        ball = {settings.screenWidth / 2.0f, settings.screenHeight / 2.0f};
 
         dLeft = {0,0};
         dRight = {0,0};
@@ -73,11 +75,11 @@ public:
         if (right.y < 0) right.y = 0;
         if (left.y < 0) left.y = 0;
 
-        if (right.y > screenHeight) right.y = screenHeight;
-        if (left.y > screenHeight) left.y = screenHeight;
+        if (right.y > settings.screenHeight) right.y = settings.screenHeight;
+        if (left.y > settings.screenHeight) left.y = settings.screenHeight;
 
-        if (ball.x < 0 || ball.x > screenWidth) dBall.x = -dBall.x;
-        if (ball.y < 0 || ball.y > screenHeight) dBall.y = -dBall.y;
+        if (ball.x < 0 || ball.x > settings.screenWidth) dBall.x = -dBall.x;
+        if (ball.y < 0 || ball.y > settings.screenHeight) dBall.y = -dBall.y;
 
 
 

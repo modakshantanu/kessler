@@ -8,9 +8,9 @@
 #include "OptionsView.h"
 #include <bits/stdc++.h>
 
-extern int screenHeight, screenWidth;
 extern float uiScale;
 extern Scene* curScene, *nextScene; 
+extern Settings settings;
 
 extern MainMenu* mainMenu;
 
@@ -18,13 +18,14 @@ extern MainMenu* mainMenu;
 class SettingsScene : public Scene {
 public:
     TextView title;
+    TextView restartNotif;
     TextButton backButton;
     vector<OptionButton> opts;
     OptionsView optView;
 
     SettingsScene() {
 
-        int centerX = screenWidth / 2;
+        int centerX = settings.screenWidth / 2;
 
         title = TextView("Settings" , centerX , 85, 64 * uiScale, BOTTOM, CENTER);
 
@@ -37,12 +38,25 @@ public:
             nextScene = (Scene*) mainMenu;
         };
 
-        optView = OptionsView("Resolution: ", centerX - 300, 300);
-        optView.addOption("1920x1080");
-        optView.addOption("2560x1440");
 
+
+        optView = OptionsView("Resolution: ", centerX - 400, 300);
+        restartNotif = TextView("Requires Restart", centerX - 400, 310, 20, TOP, LEFT, RED);
+
+        std::vector<std::string> resolutions = getResOptions();
+        for (auto &s: resolutions) {
+            optView.addOption(s);
+            if (parseRes(s) == std::pair<int,int>({settings.screenWidth, settings.screenHeight})) {
+                optView.setSelected(s);
+            }
+        } 
+        
         optView.onChange = [](std::string id) {
-            cout<<id<<endl;
+            auto dim = parseRes(id);
+            settings.screenWidth = dim.first;
+            settings.screenHeight = dim.second;
+            saveSettings("kessler_settings.txt", settings);
+
         };
 
     }
@@ -74,6 +88,7 @@ public:
         ClearBackground(BLACK);
         backButton.render();
         title.render();
+        restartNotif.render();
         for (auto &e: opts) {
             e.render();
         }

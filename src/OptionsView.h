@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include "UIElement.h"
 #include "mathutils.h"
+#include "Settings.h"
 #include <bits/stdc++.h>
 
 class OptionsView;

@@ -13,7 +13,6 @@ using namespace std;
 float uiScale = 1.0;
 
 Scene* curScene, *nextScene; 
-int screenWidth,screenHeight;
 Settings settings;
 
 class MainMenu;

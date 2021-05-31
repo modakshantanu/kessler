@@ -5,13 +5,14 @@
 #include "Scene.h"
 #include "Button.h"
 #include "utils.h"
+#include "Settings.h"
 
 #include <queue>
 #include <vector>
 
 
 
-extern int screenHeight, screenWidth;
+extern Settings settings;
 extern Scene* curScene, *nextScene; 
 
 class GameScene;
@@ -26,8 +27,8 @@ public:
 
     PauseScene() {
 
-        int centerX = screenWidth / 2;
-        int centerY = screenHeight / 2;
+        int centerX = settings.screenWidth / 2;
+        int centerY = settings.screenHeight / 2;
         int buttonWidth = 250 * uiScale;
         int buttonHeight = 50 * uiScale;
         int buttonSpacing = 25 * uiScale;
