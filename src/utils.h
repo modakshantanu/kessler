@@ -8,6 +8,7 @@
 #include "SettingsScene.h"
 #include "Scene.h"
 #include "Settings.h"
+#include "KesslerGameScene.h"
 
 using namespace std;
 float uiScale = 1.0;
@@ -18,8 +19,8 @@ Settings settings;
 class MainMenu;
 MainMenu* mainMenu;
 
-class GameScene;
-GameScene* gameScene;
+class KesslerGameScene;
+KesslerGameScene* gameScene;
 
 class PauseScene;
 PauseScene* pauseScene;

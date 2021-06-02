@@ -119,9 +119,9 @@ public:
         int mouseX = GetMouseX();
         int mouseY = GetMouseY();
         int mousePressed = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
-        int mouseReleased = IsMouseButtonReleased(MOUSE_LEFT_BUTTON);
-        int mouseUp = IsMouseButtonUp(MOUSE_LEFT_BUTTON);
-        int mouseDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
+        // int mouseReleased = IsMouseButtonReleased(MOUSE_LEFT_BUTTON);
+        // int mouseUp = IsMouseButtonUp(MOUSE_LEFT_BUTTON);
+        // int mouseDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
 
         for (auto &e: buttons) {
             if (e.intersects(mouseX, mouseY) && mousePressed && !e.isSelected) {

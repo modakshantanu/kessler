@@ -16,8 +16,8 @@
 extern Settings settings;
 extern Scene* curScene, *nextScene; 
 
-class GameScene;
-extern GameScene* gameScene;
+class KesslerGameScene;
+extern KesslerGameScene* gameScene;
 
 class InstructionsScene;
 extern InstructionsScene* instructionsScene;

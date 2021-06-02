@@ -15,8 +15,8 @@
 extern Settings settings;
 extern Scene* curScene, *nextScene; 
 
-class GameScene;
-extern GameScene* gameScene;
+class KesslerGameScene;
+extern KesslerGameScene* gameScene;
 extern MainMenu* mainMenu;
 
 class PauseScene : public Scene {
@@ -84,7 +84,7 @@ public:
     void render() {
 
         // Show game in bg of pause screen
-        gameScene->render();
+        // gameScene->render();
         
         ClearBackground(BLACK);
         for (auto &e: buttons) {

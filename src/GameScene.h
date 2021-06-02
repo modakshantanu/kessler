@@ -25,6 +25,8 @@ public:
     Vector2 left, right, ball;
     Vector2 dLeft, dRight, dBall;
 
+    Camera2D camera = {0};
+
     GameScene() {
 
         float padding = 20 * settings.screenWidth / 1280.0;
@@ -38,6 +40,7 @@ public:
         dLeft = {0,0};
         dRight = {0,0};
         dBall = {3,3};
+        
 
     }
 
@@ -52,6 +55,7 @@ public:
         dLeft = {0,0};
         dRight = {0,0};
         dBall = {3,3};
+        camera = {0};
     }
 
     void update() {
@@ -81,7 +85,10 @@ public:
         if (ball.x < 0 || ball.x > settings.screenWidth) dBall.x = -dBall.x;
         if (ball.y < 0 || ball.y > settings.screenHeight) dBall.y = -dBall.y;
 
-
+        camera.target = left;
+        camera.offset = {0, settings.screenHeight / 2};
+        camera.zoom = 1;
+        camera.rotation  =0;
 
 
 
@@ -90,6 +97,9 @@ public:
 
         if (math::intersects(leftRect, ball)) dBall.x = -dBall.x;
         if (math::intersects(rightRect, ball)) dBall.x = -dBall.x;
+
+
+        // camera.offset = left;
 
 
         if (IsKeyPressed(KEY_ESCAPE)) {
@@ -101,6 +111,7 @@ public:
     void render() {
         // BeginDrawing();
         ClearBackground(BLACK);
+        BeginMode2D(camera);
 
         Rectangle leftRect = {left.x - paddleWidth / 2 , left.y - paddleHeight / 2, paddleWidth, paddleHeight};
         Rectangle rightRect = {right.x - paddleWidth / 2 , right.y - paddleHeight / 2, paddleWidth, paddleHeight};
@@ -109,7 +120,7 @@ public:
         DrawRectangleRec(rightRect, WHITE);
 
         DrawCircleV(ball, 8, BLUE);
-
+        EndMode2D();
         DrawFPS(10, 10);
         // EndDrawing();
     }

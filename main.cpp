@@ -4,10 +4,10 @@
 #include "src/utils.h"
 #include "src/Scene.h"
 #include "src/MainMenu.h"
-#include "src/GameScene.h"
 #include "src/PauseScene.h"
 #include "src/InstructionsScene.h"
 #include "src/SettingsScene.h"
+#include "src/KesslerGameScene.h"
 
 #include "src/Settings.h"
 
@@ -18,7 +18,7 @@ namespace Win {
 bool debug = false;
 
 extern float uiScale;
-extern GameScene* gameScene;
+extern KesslerGameScene* gameScene;
 extern PauseScene* pauseScene;
 extern MainMenu* mainMenu;
 extern InstructionsScene* instructionsScene;
@@ -28,10 +28,9 @@ extern Scene* curScene, *nextScene;
 extern Settings settings;
 
 int main() {
-    // debug = true;
+    debug = true;
 
     settings = loadSettings("kessler_settings.txt");
-
     // screenWidth = 1920;
     // screenHeight = 1080;
 
@@ -42,7 +41,7 @@ int main() {
     SetConfigFlags(FLAG_VSYNC_HINT);
 
     mainMenu = new MainMenu();
-    gameScene = new GameScene();
+    gameScene = new KesslerGameScene();
     pauseScene = new PauseScene();
     settingsScene = new SettingsScene();
     instructionsScene = new InstructionsScene();
