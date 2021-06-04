@@ -9,6 +9,7 @@
 #include "game/Planet.h"
 #include "game/Ship.h"
 #include "game/physics.h"
+#include "game/Asteroid.h"
 #include <bits/stdc++.h>
 
 extern Settings settings;
@@ -28,6 +29,8 @@ public:
     Camera2D camera = {0};
     Ship ship;
     Planet planet;
+    vector<Asteroid> asteroids;
+    
 
    
     KesslerGameScene() {
@@ -37,6 +40,7 @@ public:
         planet.pos = {0,0};
         planet.vel = {0,0};
 
+        
     }
 
 
@@ -55,30 +59,22 @@ public:
         camera.zoom = 1;
         camera.rotation = 0;
         
-        float n = 1;
-        // for (int i  =0; i < n; i++) {
-            ship.acc = gravAcc(planet.pos, ship.pos, planet.GM);
-            ship.vel = ship.vel + (ship.acc * (frameTime/ n));
-            ship.pos = ship.pos + (ship.vel * (frameTime/ n));
-
-        // }
         
 
-        float v2 = magsq(ship.vel);
-        // printf("%f\n", v2);
-        float r = mag(ship.pos - planet.pos);
-        // printf("%f\n", r);
-        float a = 1.0 / (2.0/r - v2 / planet.GM);
-        // printf("%f\n", a);
+        if (ship.moved) {
+            ship.moved = false;
+            ship.newOrbit();
+        }
 
-        Ellipse orbit = getEllipse(planet.pos, ship.pos, ship.vel, a);
-        ship.orbit  = orbit;
+
+        ship.update(frameTime);
+
+        for (auto &it: asteroids){
+            it.update(frameTime);
+        }
 
 
     
-
-
-
         if (IsKeyPressed(KEY_ESCAPE)) {
             nextScene = (Scene*) pauseScene;
         }
@@ -92,12 +88,11 @@ public:
 
 
         ship.render();
-
-
-        for (float t = 0; t < 2*PI; t += PI / 60.0) {
-            Vector2 p = parametricEllipse(ship.orbit, ship.pos, ship.vel, t, PI / 60.0);
-            DrawPixel(p.x , p.y, Color{0, 150, 50, 255});
+        for (auto &it: asteroids) {
+            it.render();
         }
+
+
 
 
         EndMode2D();

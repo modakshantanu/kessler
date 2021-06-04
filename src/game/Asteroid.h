@@ -1,21 +1,19 @@
-#ifndef SHIP_H
-#define SHIP_H
+#ifndef ASTEROID_H
+#define ASTEROID_H
 
 #include "raylib.h"
 #include "OrbitalEntity.h"
 #include "physics.h"
 
-class Ship : public OrbitalEntity {
+class Asteroid : public OrbitalEntity {
 public:
-    
-    vector<Vector2> orbitPoints;
-    bool moved = true;
 
-    Ship() {}
-    Ship(Vector2 p, Vector2 v) {
+    Asteroid() {}
+    Asteroid(Vector2 p, Vector2 v) {
         pos = p;
         vel = v;
     }
+    
 
     void newOrbit(float GM = 4500000) {
         float a = 1.0 / (2.0/mag(pos) - magsq(vel) / GM);
@@ -59,14 +57,6 @@ public:
         float step = PI / 60.0;
         startT -= fmod(startT , step);
         if (dir == 1) startT += step;
-
-        orbitPoints.clear();
-        for (float t = 0; t < 2*PI; t += step) {
-
-            Vector2 point = {orbit.f2.x / 2 + a * cos(startT + dir * t), b * sin(startT + dir * t)};
-            point = rotate(point, orbit.angle);
-            orbitPoints.push_back(point);
-        }
         t = 0;
     }
 
@@ -88,13 +78,10 @@ public:
 
     }
 
-    void render() {
-        for (auto &it: orbitPoints) {
-            DrawPixel(it.x, it.y, GRAY);
-        }
 
-        
-        DrawCircle(pos.x, pos.y, 5, BLUE);
+
+    void render() { 
+        DrawCircle(pos.x, pos.y, 5, DARKGRAY);
     }
 
 };
