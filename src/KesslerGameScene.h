@@ -34,18 +34,21 @@ public:
 
    
     KesslerGameScene() {
-        ship.pos = {0,150};
-        ship.vel = {200,0};
+        reset();
 
-        planet.pos = {0,0};
-        planet.vel = {0,0};
 
-        
     }
 
 
     void reset() {
-    
+        
+        ship.pos = {150,150};
+        ship.vel = {150,0};
+        ship.rot = 0;
+        ship.newOrbit();
+
+        planet.pos = {0,0};
+        planet.vel = {0,0};
     }
 
     void update() {
@@ -59,8 +62,25 @@ public:
         camera.zoom = 1;
         camera.rotation = 0;
         
-        
+        bool leftKey = IsKeyDown(KEY_LEFT);
+        bool rightKey = IsKeyDown(KEY_RIGHT);
+        bool upKey = IsKeyDown(KEY_UP);
+        bool spaceKey = IsKeyDown(KEY_SPACE);
 
+        if (leftKey) {
+            ship.rot -= frameTime * 5;
+        } 
+        if (rightKey) {
+            ship.rot += frameTime * 5;
+        }
+
+        if (upKey) {
+
+            ship.vel = ship.vel + rotate(Vector2{1,0}, ship.rot + PI / 2) * 0.5 ; 
+            ship.pos += ship.vel  * frameTime;
+            ship.moved = true;
+        }
+ 
         if (ship.moved) {
             ship.moved = false;
             ship.newOrbit();

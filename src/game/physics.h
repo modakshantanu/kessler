@@ -178,16 +178,17 @@ pair<Vector2, Vector2> updatePos(Ellipse e, Vector2 start, Vector2 vel, float di
     velUnit = rotate(velUnit , ellipseAngle);
     res = rotate(res , ellipseAngle);
     
-    // Finding the velocity 
-
-
-
     return {res , velUnit};
 }
 
 Vector2 parametricOrbit(Orbit &o, float t) {
     t = o.startT + o.dir * t;
-    Vector2 p = {o.f2.x / 2 + o.a * cos(t), o.b * sin(t)};
+    Vector2 p;
+    if (o.a >= 0) {
+        p = {o.f2.x / 2 + o.a * cos(t), o.b * sin(t)};
+    } else {
+        p = {o.f2.x / 2 + o.a * cosh(t) , o.b * sinh(t)};
+    }
     return rotate(p, o.angle);
 }
 
@@ -198,8 +199,12 @@ Vector2 gravAcc(Vector2 p, Vector2 s, float GM) {
     return unit((p - s)) * res;
 }
 
+float slope(Vector2 start, Vector2 end) {
+    return (end.y - start.y) / (end.x - start.x);
+}
 
-
-
+void pVec(string s, Vector2 v) {
+    printf("%s: %f %f\n", s.c_str(), v.x, v.y);
+}
 
 #endif  
