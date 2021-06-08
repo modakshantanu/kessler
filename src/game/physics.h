@@ -5,7 +5,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-
 struct Ellipse {
     Vector2 f1, f2;
     float a;
@@ -205,6 +204,33 @@ float slope(Vector2 start, Vector2 end) {
 
 void pVec(string s, Vector2 v) {
     printf("%s: %f %f\n", s.c_str(), v.x, v.y);
+}
+
+bool isNan(Vector2 v) {
+    return isnan(v.x) || isnan(v.y);
+}
+
+float randBw(float low, float high) {
+    return low + (((float)rand()) / RAND_MAX) * (high - low);
+}
+
+
+
+Color gradient(Color a, Color b, float t) {
+    float s = 1-t;
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wnarrowing"
+
+    Color res = {
+        a.r * s + b.r * t,
+        a.g * s + b.g * t,
+        a.b * s + b.b * t,
+        a.a * s + b.a * t
+    };
+
+    #pragma GCC diagnostic pop
+
+    return res;
 }
 
 #endif  

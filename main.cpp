@@ -28,6 +28,8 @@ extern Scene* curScene, *nextScene;
 extern Settings settings;
 
 int main() {
+
+    srand(time(NULL));
     debug = true;
 
     settings = loadSettings("kessler_settings.txt");
