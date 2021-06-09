@@ -56,6 +56,12 @@ public:
 
         planet.pos = {0,0};
         planet.vel = {0,0};
+
+        asteroids.clear();
+        for (int i = 0; i < 5; i++) {
+            asteroids.push_back(Asteroid());
+            asteroids[i].generateRandom(ship.pos);
+        }
     }
 
     void update() {
@@ -65,9 +71,9 @@ public:
         // printf("%f\n", frameTime);
 
        
-        bool leftKey = IsKeyDown(KEY_A);
-        bool rightKey = IsKeyDown(KEY_D);
-        bool upKey = IsKeyDown(KEY_W);
+        bool leftKey = IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT);
+        bool rightKey = IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT);
+        bool upKey = IsKeyDown(KEY_W) || IsKeyDown(KEY_UP);
         bool spaceKey = IsKeyDown(KEY_SPACE);
         bool zoomInKey = IsKeyPressed(KEY_E);
         bool zoomOutKey = IsKeyPressed(KEY_Q);
@@ -96,13 +102,10 @@ public:
             targetZoom = min(maxZoom, targetZoom * zoomInc);
         }
 
-
-
         if (ship.moved) {
             ship.moved = false;
             ship.newOrbit();
         }
-
 
         ship.update(frameTime);
 
@@ -110,9 +113,64 @@ public:
             it.update(frameTime);
         }
 
+
+        vector<vector<Vector2>> polyAsteroids;
+        vector<Vector2> polyShip;
+
+        vector<BoundingBox> bbAsteroids;
+        BoundingBox bbShip;
+
+        for (unsigned i = 0; i < asteroids.size(); i++) {
+            polyAsteroids.push_back(asteroids[i].getPoly());
+            bbAsteroids.push_back(getBb(polyAsteroids[i]));
+        }
+
+        polyShip = ship.getPoly();
+        bbShip = getBb(polyShip);
+        // print(bbShip);
+        // print(bbAsteroids[0]);
+
+        // Asteroid - ship intersection
+        for (unsigned i = 0; i < asteroids.size(); i++) {
+            if (!bbIntersects(bbAsteroids[i], bbShip)) {
+                continue;
+            }
+            // printf("Checking this\n");
+            if (polyIntersects(polyAsteroids[i], polyShip)) {
+                printf("Ship intersects with poly %d\n", i);
+            }
+        }
+
+        // Asteroid - asteroid intersection
+
+        for (unsigned i = 0; i < asteroids.size(); i++) {
+            for (unsigned j = i+1; j < asteroids.size(); j++) {
+                if (!bbIntersects(bbAsteroids[i], bbAsteroids[j])) {
+                    continue;
+                }
+
+                if (polyIntersects(polyAsteroids[i],  polyAsteroids[j])) {
+                    printf("Asteroid %d and %d intersect\n", i,j);
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         vector<Particle> temp = particles;
         particles.clear();
-
 
         for (auto &it: temp) {
             it.update(frameTime);
@@ -139,7 +197,7 @@ public:
         
 
         camera.zoom = curZoom;
-        camera.target = ship.pos;
+        camera.target = planet.pos;
         camera.offset = {settings.screenWidth / 2.0f, settings.screenHeight / 2.0f};
         camera.rotation = 0;
         

@@ -20,8 +20,18 @@ struct Orbit {
     float startT; 
 };
 
+// struct BoundingBox {
+//     Vector2 tl;
+//     Vector2 br;
+// };
+
+
 void print(Orbit o) {
     printf("%f,%f  a=%f b=%f angle=%f starT = %f, dir=%d\n", o.f2.x, o.f2.y, o.a, o.b, o.angle, o.startT, o.dir);
+}
+
+void print(BoundingBox &b) {
+    printf("Bounding Box (%f %f) , (%f %f)\n", b.min.x, b.min.y, b.max.x, b.max.y);
 }
 
 Vector2 operator+(Vector2 a, Vector2 b) {
@@ -231,6 +241,70 @@ Color gradient(Color a, Color b, float t) {
     #pragma GCC diagnostic pop
 
     return res;
+}
+bool bbIntersects(BoundingBox &a, BoundingBox &b) {
+    if (a.min.x > b.max.x || b.min.x > a.max.x) return false;
+    if (a.max.y < b.min.y || b.max.y < a.min.y) return false;
+    return true;
+}
+
+int orientation(Vector2 &p, Vector2 &q, Vector2 &r)
+{
+    int val = (q.y - p.y) * (r.x - q.x) -
+            (q.x - p.x) * (r.y - q.y);
+ 
+    if (val == 0) return 0; // colinear
+    return (val > 0)? 1: 2; // clock or counterclock wise
+}
+
+bool doIntersect(Vector2 &p1, Vector2 &q1, Vector2 &p2, Vector2 &q2)
+{
+    // Find the four orientations needed for general and
+    // special cases
+    int o1 = orientation(p1, q1, p2);
+    int o2 = orientation(p1, q1, q2);
+    int o3 = orientation(p2, q2, p1);
+    int o4 = orientation(p2, q2, q1);
+ 
+    // General case
+    if (o1 != o2 && o3 != o4)
+        return true;
+ 
+    return false;
+}
+
+bool polyIntersects(vector<Vector2> &a, vector<Vector2> &b) {
+    
+    for (unsigned i = 0; i < a.size(); i++) {
+        Vector2 a1 = a[i];
+        Vector2 a2 = a[(i+1)%a.size()];
+
+        for (unsigned j = 0; j < b.size(); j++) {
+            Vector2 b1 = b[j];
+            Vector2 b2 = b[(j+1) % b.size()];
+
+            if (doIntersect(a1, a2, b1, b2)) return true;
+        }
+    }
+    return false;
+}
+
+BoundingBox getBb(vector<Vector2> &poly) {
+    float minX = 1e9;
+    float minY = 1e9;
+    float maxX = -1e9;
+    float maxY = -1e9;
+
+    for (auto &it: poly) {
+        float x = it.x;
+        float y = it.y;
+        minX = min(minX , x);
+        minY = min(minY , y);
+        maxX = max(maxX,  x);
+        maxY = max(maxY , y);
+    }
+
+    return {{minX, minY} , {maxX, maxY}};
 }
 
 #endif  

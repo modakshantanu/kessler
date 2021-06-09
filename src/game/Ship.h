@@ -11,6 +11,8 @@ public:
     
     vector<Vector2> orbitPoints;
     bool moved = true;
+    bool collided = false;
+
 
     Ship() {}
     Ship(Vector2 p, Vector2 v) {
@@ -54,6 +56,19 @@ public:
         DrawTriangle(v1,v2,v3, BLUE);
 
    
+    }
+
+    vector<Vector2> getPoly() {
+        vector<Vector2> res;
+        Vector2 v1 = {0,8};
+        Vector2 v2 = {5,-8};
+        Vector2 v3 = {-5,-8};
+
+        v1 = rotate(v1, rot) + pos;
+        v2 = rotate(v2, rot) + pos;
+        v3 = rotate(v3, rot) + pos;
+        res = {v1, v2, v3};
+        return res;
     }
 
     Particle getParticle() {

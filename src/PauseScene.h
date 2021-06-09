@@ -83,10 +83,10 @@ public:
 
     void render() {
 
-        // Show game in bg of pause screen
-        // gameScene->render();
-        
         ClearBackground(BLACK);
+        // Show game in bg of pause screen
+        gameScene->render();
+        
         for (auto &e: buttons) {
             e.render();
         }
