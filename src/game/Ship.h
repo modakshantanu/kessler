@@ -13,7 +13,6 @@ public:
     bool moved = true;
     bool collided = false;
 
-
     Ship() {}
     Ship(Vector2 p, Vector2 v) {
         pos = p;
@@ -80,9 +79,7 @@ public:
         Vector2 pVel = {0, -250};
         pVel = rotate(pVel, rot) + vel;
 
-        Color endColor = YELLOW;
-        endColor.a = 0;
-        Particle p = Particle(pPos, pVel, RED, endColor);
+        Particle p = Particle(pPos, pVel,YELLOW, RED);
         p.ttl = randBw(0.25,0.5);
 
         return p;
@@ -95,9 +92,8 @@ public:
             Vector2 pPos = pos;
             float pRadius = randBw(1 , 3);
             
-            Color endColor = YELLOW;
-            endColor.a = 0;
-            Particle p = Particle(pPos, pVel, RED, endColor, pRadius);
+ ;
+            Particle p = Particle(pPos, pVel, YELLOW, RED, pRadius);
             p.ttl = randBw(1 , 2);
             particles.push_back(p);
         }

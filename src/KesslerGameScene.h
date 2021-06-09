@@ -36,6 +36,7 @@ public:
     vector<Asteroid> asteroids;
     vector<Particle> particles;
     bool isAlive = true;
+    bool shipCam = true;
 
     float curZoom = 1;
     float targetZoom = 1;
@@ -44,7 +45,6 @@ public:
     float zoomStep = 1.023373892; // 2 ^ 1/60
     float zoomInc = 1.41421356237; // 2 ^ 1/2
 
-   
     KesslerGameScene() {
         reset();
     }
@@ -67,17 +67,111 @@ public:
         }
 
         isAlive = true;
+        shipCam = true;
 
         endText = TextView("Game Over. Press R to restart", settings.screenWidth / 2, settings.screenHeight * 0.75, 32, BOTTOM, CENTER, RED);
     }
 
-    void update() {
+    void collisionHandler() {
         
-        float frameTime = GetFrameTime();
-        if (abs(frameTime - 0.01666) > 0.001) printf("%f\n", frameTime);
-        // printf("%f\n", frameTime);
+        vector<vector<Vector2>> polyAsteroids;
+        vector<Vector2> polyShip;
 
-       
+        vector<BoundingBox> bbAsteroids;
+        BoundingBox bbShip;
+
+        for (unsigned i = 0; i < asteroids.size(); i++) {
+            polyAsteroids.push_back(asteroids[i].getPoly());
+            bbAsteroids.push_back(getBb(polyAsteroids[i]));
+        }
+
+        polyShip = ship.getPoly();
+        bbShip = getBb(polyShip);
+
+        if (isAlive) {
+            // Asteroid - ship intersection
+            for (unsigned i = 0; i < asteroids.size(); i++) {
+
+                if (asteroids[i].cooldown > 0) {
+                    continue;
+                }
+
+                if (!bbIntersects(bbAsteroids[i], bbShip)) {
+                    continue;
+                }
+                if (polyIntersects(polyAsteroids[i], polyShip)) {
+                    ship.addExplosionParticles(particles);
+                    isAlive = false;                    
+                }
+            }
+                    // Ship - planet intersection
+            if (bbCircleIntersects(planet.pos, planet.radius, bbShip) 
+                    && polyCircleIntersects(planet.pos, planet.radius, polyShip)) {
+            
+                ship.addExplosionParticles(particles);
+                isAlive = false;   
+            }
+        }
+
+
+        vector<Asteroid> nextAsteroids;
+
+
+        for (unsigned i = 0; i < asteroids.size(); i++) {
+            
+            // Asteroid - planet collision
+            if (bbCircleIntersects(planet.pos, planet.radius, bbAsteroids[i]) 
+                    && polyCircleIntersects(planet.pos, planet.radius, polyAsteroids[i])) {
+                // Collided with planet
+                asteroids[i].collided = true;
+                printf("Asteroid %d collided with planet\n", i);
+                asteroids[i].addExplosionParticles(particles);  
+            }
+
+            // Size 1 asteroids will not collide with each other
+            // Newly formed asteroids will not collide
+            if (asteroids[i].size == 1 || asteroids[i].cooldown > 0) {
+                goto noCollisions; // YEAH I USED IT WHAT ARE YOU GONNA DO?????
+            }
+
+            // Asteroid - asteroid intersection
+            for (unsigned j = i+1; j < asteroids.size(); j++) {
+                
+                if (!bbIntersects(bbAsteroids[i], bbAsteroids[j])) {
+                    continue;
+                }
+
+                if (polyIntersects(polyAsteroids[i],  polyAsteroids[j])) {
+                    asteroids[i].collided = asteroids[j].collided = true;
+                    auto children1 = asteroids[i].split();
+                    auto children2 = asteroids[j].split();
+
+                    nextAsteroids.insert(nextAsteroids.end(), children1.begin(), children1.end());    
+                    nextAsteroids.insert(nextAsteroids.end(), children2.begin(), children2.end());
+
+                    printf("Asteroid %d and %d collided\n", i , j);
+
+                    asteroids[i].addExplosionParticles(particles);  
+                    asteroids[j].addExplosionParticles(particles);  
+                    // TODO add explosion    
+                }
+            }
+
+            noCollisions:
+
+            // This asteroid survived all possible collisions
+            if (!asteroids[i].collided) {
+                nextAsteroids.push_back(asteroids[i]);
+            }
+        }
+
+        asteroids = nextAsteroids;
+        sort(asteroids.begin(), asteroids.end(), [](Asteroid &a, Asteroid &b){return a.size > b.size;}); // sort in descending order of size 
+    
+    }
+
+    void inputHandler(float frameTime) {
+          
         bool leftKey = IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT);
         bool rightKey = IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT);
         bool upKey = IsKeyDown(KEY_W) || IsKeyDown(KEY_UP);
@@ -111,7 +205,28 @@ public:
         if (zoomOutKey) {
             targetZoom = min(maxZoom, targetZoom * zoomInc);
         }
+        if (IsKeyPressed(KEY_C)) {
+            shipCam = !shipCam;
+        }
 
+        
+        if (IsKeyPressed(KEY_ESCAPE)) {
+            nextScene = (Scene*) pauseScene;
+        }
+
+        if (!isAlive && IsKeyPressed(KEY_R)) {
+            reset();
+        }
+    }
+
+    void update() {
+        
+        float frameTime = GetFrameTime();
+        // if (abs(frameTime - 0.01666) > 0.001) printf("%f\n", frameTime);
+        // printf("%f\n", frameTime);
+
+        inputHandler(frameTime);
+             
         if (ship.moved) {
             ship.moved = false;
             ship.newOrbit();
@@ -125,57 +240,6 @@ public:
             it.update(frameTime);
         }
 
-
-
-        vector<vector<Vector2>> polyAsteroids;
-        vector<Vector2> polyShip;
-
-        vector<BoundingBox> bbAsteroids;
-        BoundingBox bbShip;
-
-        for (unsigned i = 0; i < asteroids.size(); i++) {
-            polyAsteroids.push_back(asteroids[i].getPoly());
-            bbAsteroids.push_back(getBb(polyAsteroids[i]));
-        }
-
-        polyShip = ship.getPoly();
-        bbShip = getBb(polyShip);
-
-        if (isAlive) {
-            // Asteroid - ship intersection
-            for (unsigned i = 0; i < asteroids.size(); i++) {
-                if (!bbIntersects(bbAsteroids[i], bbShip)) {
-                    continue;
-                }
-                if (polyIntersects(polyAsteroids[i], polyShip)) {
-                    ship.addExplosionParticles(particles);
-                    isAlive = false;                    
-                }
-            }
-                    // Ship - planet intersection
-            if (bbCircleIntersects(planet.pos, planet.radius, bbShip) 
-                    && polyCircleIntersects(planet.pos, planet.radius, polyShip)) {
-            
-                ship.addExplosionParticles(particles);
-                isAlive = false;   
-            }
-        }
-
-        // Asteroid - asteroid intersection
-        for (unsigned i = 0; i < asteroids.size(); i++) {
-            for (unsigned j = i+1; j < asteroids.size(); j++) {
-                if (!bbIntersects(bbAsteroids[i], bbAsteroids[j])) {
-                    continue;
-                }
-
-                if (polyIntersects(polyAsteroids[i],  polyAsteroids[j])) {
-                    printf("Asteroid %d and %d intersect\n", i,j);
-                }
-            }
-        }
-
-
-
         vector<Particle> temp = particles;
         particles.clear();
 
@@ -185,10 +249,8 @@ public:
                 particles.push_back(it);
             }
         }
-    
-        if (IsKeyPressed(KEY_ESCAPE)) {
-            nextScene = (Scene*) pauseScene;
-        }
+
+        collisionHandler();
 
 
         if (abs(curZoom / targetZoom - 1) > 0.01) {
@@ -199,13 +261,12 @@ public:
             }
         } 
 
-        if (!isAlive && IsKeyPressed(KEY_R)) {
-            reset();
-        }
-        
-    
+
+
+
+
         camera.zoom = curZoom;
-        camera.target = planet.pos;
+        camera.target = shipCam ? ship.pos : planet.pos;
         camera.offset = {settings.screenWidth / 2.0f, settings.screenHeight / 2.0f};
         camera.rotation = 0;
         

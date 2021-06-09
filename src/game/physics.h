@@ -34,6 +34,10 @@ void print(BoundingBox &b) {
     printf("Bounding Box (%f %f) , (%f %f)\n", b.min.x, b.min.y, b.max.x, b.max.y);
 }
 
+void print(Color c) {
+    printf("%d %d %d %d\n", c.r, c.g, c.b, c.a);
+}
+
 Vector2 operator+(Vector2 a, Vector2 b) {
     return {a.x + b.x, a.y + b.y};
 }

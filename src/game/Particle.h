@@ -21,8 +21,8 @@ public:
         ttl = 1;
         lifetime = 0;
         decay = 0.97;
-        col1 = c1;
-        col2 = c2;
+        c1 = col1;
+        c2 = col2;
         radius = r;
     }
     
@@ -35,7 +35,7 @@ public:
     }
 
     void render() { 
-        DrawCircle(pos.x, pos.y,radius, gradient(YELLOW, RED, lifetime / ttl));
+        DrawCircle(pos.x, pos.y,radius, gradient(c1, c2, lifetime / ttl));
     }
 
 };
