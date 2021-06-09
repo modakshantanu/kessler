@@ -9,12 +9,13 @@ public:
     
     Vector2 pos, vel;
     double GM = 4500000;
+    float radius = 100;
 
     Planet() {}
     Planet(Vector2 p, Vector2 v) : pos(p) , vel(v) {}
     
     void render() {
-        DrawCircle(pos.x, pos.y, 100, BROWN);
+        DrawCircle(pos.x, pos.y, radius, BROWN);
     }
 
 };

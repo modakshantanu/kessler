@@ -307,4 +307,26 @@ BoundingBox getBb(vector<Vector2> &poly) {
     return {{minX, minY} , {maxX, maxY}};
 }
 
+bool bbCircleIntersects(Vector2 &center, float radius, BoundingBox &b) {
+
+    Vector2 p1 = {b.min.x, b.min.y};
+    Vector2 p2 = {b.max.x, b.max.y};
+    Vector2 p3 = {p1.x, p2.y};
+    Vector2 p4 = {p2.x, p1.y};
+
+    if (mag(p1 - center) < radius) return true;
+    if (mag(p2 - center) < radius) return true;
+    if (mag(p3 - center) < radius) return true;
+    if (mag(p4 - center) < radius) return true;
+    return false;
+
+}
+
+bool polyCircleIntersects(Vector2 center, float radius, vector<Vector2> &poly) {
+    for (auto &p: poly) {
+        if (mag(p - center) < radius) return true;
+    }
+    return false;
+}
+
 #endif  

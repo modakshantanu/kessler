@@ -140,8 +140,6 @@ public:
 
         polyShip = ship.getPoly();
         bbShip = getBb(polyShip);
-        // print(bbShip);
-        // print(bbAsteroids[0]);
 
         if (isAlive) {
             // Asteroid - ship intersection
@@ -149,11 +147,17 @@ public:
                 if (!bbIntersects(bbAsteroids[i], bbShip)) {
                     continue;
                 }
-                // printf("Checking this\n");
                 if (polyIntersects(polyAsteroids[i], polyShip)) {
                     ship.addExplosionParticles(particles);
                     isAlive = false;                    
                 }
+            }
+                    // Ship - planet intersection
+            if (bbCircleIntersects(planet.pos, planet.radius, bbShip) 
+                    && polyCircleIntersects(planet.pos, planet.radius, polyShip)) {
+            
+                ship.addExplosionParticles(particles);
+                isAlive = false;   
             }
         }
 
@@ -169,6 +173,8 @@ public:
                 }
             }
         }
+
+
 
         vector<Particle> temp = particles;
         particles.clear();
