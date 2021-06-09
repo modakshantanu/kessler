@@ -14,6 +14,7 @@ public:
     float rot = 1;
     float maxRadius = 0;
     bool collided = false;
+    
 
     Asteroid() {
         pos = {0,0};
@@ -41,7 +42,7 @@ public:
         // Should not spawn too close to player's ship
         pos = {randBw(200, 300) , 0};
         float circularVel = sqrt(GM / pos.x);
-        vel = {0, -randBw(circularVel, circularVel * 1.20)};
+        vel = {0, -randBw(circularVel * 0.9, circularVel * 1.20)};
         vel = rotate(vel, randBw(- PI / 8, PI / 8));
 
         if (rand() % 10 == 0) {

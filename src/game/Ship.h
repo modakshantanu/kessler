@@ -40,9 +40,9 @@ public:
     }
 
 
-    void render() {
+    void render(float zoomLevel = 1) {
         for (auto &it: orbitPoints) {
-            DrawPixel(it.x, it.y, GRAY);
+            DrawCircle(it.x, it.y, 1 / zoomLevel, GRAY);
         }
 
         Vector2 v1 = {0,8};
@@ -86,6 +86,21 @@ public:
         p.ttl = randBw(0.25,0.5);
 
         return p;
+    }
+
+    void addExplosionParticles(vector<Particle> &particles) {
+
+        for (int i = 0; i < 100; i++) {
+            Vector2 pVel = vel + rotate({randBw(125,250) , 0} , randBw(0, 2*PI));
+            Vector2 pPos = pos;
+            float pRadius = randBw(1 , 3);
+            
+            Color endColor = YELLOW;
+            endColor.a = 0;
+            Particle p = Particle(pPos, pVel, RED, endColor, pRadius);
+            p.ttl = randBw(1 , 2);
+            particles.push_back(p);
+        }
     }
 
 };

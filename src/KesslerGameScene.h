@@ -5,6 +5,7 @@
 #include "mathutils.h"
 #include "utils.h"
 #include "Scene.h"
+#include "TextView.h"
 #include "Settings.h"
 #include "game/Planet.h"
 #include "game/Ship.h"
@@ -31,8 +32,10 @@ public:
     Camera2D camera = {0};
     Ship ship;
     Planet planet;
+    TextView endText;
     vector<Asteroid> asteroids;
     vector<Particle> particles;
+    bool isAlive = true;
 
     float curZoom = 1;
     float targetZoom = 1;
@@ -62,6 +65,10 @@ public:
             asteroids.push_back(Asteroid());
             asteroids[i].generateRandom(ship.pos);
         }
+
+        isAlive = true;
+
+        endText = TextView("Game Over. Press R to restart", settings.screenWidth / 2, settings.screenHeight * 0.75, 32, BOTTOM, CENTER, RED);
     }
 
     void update() {
@@ -78,21 +85,24 @@ public:
         bool zoomInKey = IsKeyPressed(KEY_E);
         bool zoomOutKey = IsKeyPressed(KEY_Q);
 
-        if (leftKey) {
-            ship.rot -= frameTime * 5;
-        } 
-        if (rightKey) {
-            ship.rot += frameTime * 5;
-        }
 
-        if (upKey) {
+        if (isAlive) { // Ship-related actions that must only happen if player is alive
+            if (leftKey) {
+                ship.rot -= frameTime * 5;
+            } 
+            if (rightKey) {
+                ship.rot += frameTime * 5;
+            }
 
-            ship.vel = ship.vel + rotate(Vector2{1,0}, ship.rot + PI / 2) * 0.5 ; 
-            ship.pos += ship.vel  * frameTime;
-            ship.moved = true;
-            particles.push_back(ship.getParticle());
-            particles.push_back(ship.getParticle());
+            if (upKey) {
 
+                ship.vel = ship.vel + rotate(Vector2{1,0}, ship.rot + PI / 2) * 0.5 ; 
+                ship.pos += ship.vel  * frameTime;
+                ship.moved = true;
+                particles.push_back(ship.getParticle());
+                particles.push_back(ship.getParticle());
+
+            }
         }
 
         if (zoomInKey) {
@@ -107,11 +117,14 @@ public:
             ship.newOrbit();
         }
 
-        ship.update(frameTime);
+        if (isAlive) {
+            ship.update(frameTime);
+        }
 
         for (auto &it: asteroids){
             it.update(frameTime);
         }
+
 
 
         vector<vector<Vector2>> polyAsteroids;
@@ -130,19 +143,21 @@ public:
         // print(bbShip);
         // print(bbAsteroids[0]);
 
-        // Asteroid - ship intersection
-        for (unsigned i = 0; i < asteroids.size(); i++) {
-            if (!bbIntersects(bbAsteroids[i], bbShip)) {
-                continue;
-            }
-            // printf("Checking this\n");
-            if (polyIntersects(polyAsteroids[i], polyShip)) {
-                printf("Ship intersects with poly %d\n", i);
+        if (isAlive) {
+            // Asteroid - ship intersection
+            for (unsigned i = 0; i < asteroids.size(); i++) {
+                if (!bbIntersects(bbAsteroids[i], bbShip)) {
+                    continue;
+                }
+                // printf("Checking this\n");
+                if (polyIntersects(polyAsteroids[i], polyShip)) {
+                    ship.addExplosionParticles(particles);
+                    isAlive = false;                    
+                }
             }
         }
 
         // Asteroid - asteroid intersection
-
         for (unsigned i = 0; i < asteroids.size(); i++) {
             for (unsigned j = i+1; j < asteroids.size(); j++) {
                 if (!bbIntersects(bbAsteroids[i], bbAsteroids[j])) {
@@ -154,20 +169,6 @@ public:
                 }
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         vector<Particle> temp = particles;
         particles.clear();
@@ -191,11 +192,12 @@ public:
                 curZoom /= zoomStep;
             }
         } 
-        
-        
 
+        if (!isAlive && IsKeyPressed(KEY_R)) {
+            reset();
+        }
         
-
+    
         camera.zoom = curZoom;
         camera.target = planet.pos;
         camera.offset = {settings.screenWidth / 2.0f, settings.screenHeight / 2.0f};
@@ -209,8 +211,7 @@ public:
         BeginMode2D(camera);
         planet.render();
 
-
-        ship.render();
+        
         for (auto &it: asteroids) {
             it.render();
         }
@@ -218,12 +219,21 @@ public:
             it.render();
         }
 
+        if (isAlive) {
+            ship.render(curZoom);
+        } 
 
 
         EndMode2D();
+
+        if (!isAlive) {
+            endText.render();
+        }
         DrawFPS(10, 10);
         // EndDrawing();
     }
 };
+
+
 
 #endif

@@ -12,16 +12,18 @@ public:
     float ttl;
     float lifetime;
     float decay;
+    float radius = 1;
 
     Particle() {}
-    Particle(Vector2 p, Vector2 v, Color col1, Color col2) {
+    Particle(Vector2 p, Vector2 v, Color col1, Color col2, float r = 1) {
         pos = p;
         vel = v;
         ttl = 1;
         lifetime = 0;
-        decay = 0.95;
+        decay = 0.97;
         col1 = c1;
         col2 = c2;
+        radius = r;
     }
     
     void update(float frameTime) {
@@ -33,7 +35,7 @@ public:
     }
 
     void render() { 
-        DrawCircle(pos.x, pos.y,1, gradient(YELLOW, RED, lifetime / ttl));
+        DrawCircle(pos.x, pos.y,radius, gradient(YELLOW, RED, lifetime / ttl));
     }
 
 };

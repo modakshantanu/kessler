@@ -10,7 +10,6 @@ public:
     float rot = 0;
     Orbit orbit;
     float t;
-    virtual void render() = 0;
 
 
 
