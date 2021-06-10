@@ -12,6 +12,7 @@
 #include "game/physics.h"
 #include "game/Asteroid.h"
 #include "game/Particle.h"
+#include "game/Bullet.h"
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -35,13 +36,15 @@ public:
     TextView endText;
     vector<Asteroid> asteroids;
     vector<Particle> particles;
+    vector<Bullet> bullets;
+
     bool isAlive = true;
     bool shipCam = true;
 
     float curZoom = 1;
     float targetZoom = 1;
-    float minZoom = 0.5;
-    float maxZoom = 2;
+    float minZoom = 0.25;
+    float maxZoom = 4;
     float zoomStep = 1.023373892; // 2 ^ 1/60
     float zoomInc = 1.41421356237; // 2 ^ 1/2
 
@@ -61,6 +64,8 @@ public:
         planet.vel = {0,0};
 
         asteroids.clear();
+        bullets.clear();
+        particles.clear();
         for (int i = 0; i < 5; i++) {
             asteroids.push_back(Asteroid());
             asteroids[i].generateRandom(ship.pos);
@@ -104,12 +109,24 @@ public:
                     isAlive = false;                    
                 }
             }
-                    // Ship - planet intersection
+            // Ship - planet intersection
             if (bbCircleIntersects(planet.pos, planet.radius, bbShip) 
                     && polyCircleIntersects(planet.pos, planet.radius, polyShip)) {
             
                 ship.addExplosionParticles(particles);
                 isAlive = false;   
+            }
+
+            // Ship - bullet
+            for (unsigned i = 0; i < bullets.size(); i++) {
+                if (pointBbIntersects(bullets[i].pos, bbShip)
+                        && pointPolyIntersects(bullets[i].pos, polyShip)) {
+                
+                    ship.addExplosionParticles(particles);
+                    // printf("Bullet %d collided with ship\n", i);
+                    bullets[i].collided = true;
+                    isAlive = false;   
+                }
             }
         }
 
@@ -124,9 +141,29 @@ public:
                     && polyCircleIntersects(planet.pos, planet.radius, polyAsteroids[i])) {
                 // Collided with planet
                 asteroids[i].collided = true;
-                printf("Asteroid %d collided with planet\n", i);
                 asteroids[i].addExplosionParticles(particles);  
             }
+
+            // Asteroid - bullet collision
+            for (unsigned j = 0; j < bullets.size(); j++) {
+                // printf("Checking asteroid %d, bullet %d\n", i, j);
+                if ( 
+                         pointPolyIntersects(bullets[j].pos, polyAsteroids[i])) {
+                
+                    asteroids[i].collided = true;
+
+                    if (asteroids[i].size > 1) {
+                        auto children1 = asteroids[i].split();
+                        nextAsteroids.insert(nextAsteroids.end(), children1.begin(), children1.end());    
+                    }
+
+                    asteroids[i].addExplosionParticles(particles);  
+                    bullets[j].collided = true;
+
+                    // printf("Bullet %d collided with asteroid %d\n", j, i);
+                }
+            }
+
 
             // Size 1 asteroids will not collide with each other
             // Newly formed asteroids will not collide
@@ -149,11 +186,8 @@ public:
                     nextAsteroids.insert(nextAsteroids.end(), children1.begin(), children1.end());    
                     nextAsteroids.insert(nextAsteroids.end(), children2.begin(), children2.end());
 
-                    printf("Asteroid %d and %d collided\n", i , j);
-
                     asteroids[i].addExplosionParticles(particles);  
-                    asteroids[j].addExplosionParticles(particles);  
-                    // TODO add explosion    
+                    asteroids[j].addExplosionParticles(particles);    
                 }
             }
 
@@ -167,7 +201,25 @@ public:
 
         asteroids = nextAsteroids;
         sort(asteroids.begin(), asteroids.end(), [](Asteroid &a, Asteroid &b){return a.size > b.size;}); // sort in descending order of size 
-    
+
+
+        vector<Bullet> nextBullets;
+        for (unsigned i = 0; i < bullets.size(); i++) {
+            // printf("Checking Bullet with pos %f %f\n", bullets[i].pos.x, bullets[i].pos.y);
+            if (circleCircleIntersects(bullets[i].pos, bullets[i].radius, planet.pos, planet.radius)) {
+                bullets[i].collided = true;
+                printf("Bullet %d collided with planet\n",i);
+            }
+
+            if (!bullets[i].collided) {
+                // printf("Bullet %d survived\n", i);
+                nextBullets.push_back(bullets[i]);
+            } else {
+                // printf("Bullet %d collided somewhere\n", i);
+            }
+
+        }
+        bullets = nextBullets;
     }
 
     void inputHandler(float frameTime) {
@@ -175,7 +227,7 @@ public:
         bool leftKey = IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT);
         bool rightKey = IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT);
         bool upKey = IsKeyDown(KEY_W) || IsKeyDown(KEY_UP);
-        bool spaceKey = IsKeyDown(KEY_SPACE);
+        bool spaceKey = IsKeyPressed(KEY_SPACE);
         bool zoomInKey = IsKeyPressed(KEY_E);
         bool zoomOutKey = IsKeyPressed(KEY_Q);
 
@@ -208,6 +260,14 @@ public:
         if (IsKeyPressed(KEY_C)) {
             shipCam = !shipCam;
         }
+        if (spaceKey) {
+            Vector2 bPos = ship.pos + rotate({0,10} , ship.rot);
+            Vector2 bVel = ship.vel + rotate({0,500}, ship.rot);
+
+
+            bullets.push_back(ship.getBullet());
+
+        }
 
         
         if (IsKeyPressed(KEY_ESCAPE)) {
@@ -239,6 +299,13 @@ public:
         for (auto &it: asteroids){
             it.update(frameTime);
         }
+        for (auto &it: bullets) {
+            // printf("Bullet pos = %f %f, vel = %f %f\n", it.pos.x, it.pos.y, it.vel.x, it.vel.y);
+            it.update(frameTime);
+            if (it.ttl == 0) {
+                it.collided = true;
+            }
+        }
 
         vector<Particle> temp = particles;
         particles.clear();
@@ -250,6 +317,7 @@ public:
             }
         }
 
+        // printf("Bullets size = %d\n", bullets.size());
         collisionHandler();
 
 
@@ -283,6 +351,9 @@ public:
             it.render();
         }
         for (auto &it: particles) {
+            it.render();
+        }
+        for (auto &it: bullets) {
             it.render();
         }
 

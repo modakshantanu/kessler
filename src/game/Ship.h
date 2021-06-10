@@ -5,6 +5,7 @@
 #include "OrbitalEntity.h"
 #include "physics.h"
 #include "Particle.h"
+#include "Bullet.h"
 
 class Ship : public OrbitalEntity {
 public:
@@ -97,6 +98,13 @@ public:
             p.ttl = randBw(1 , 2);
             particles.push_back(p);
         }
+    }
+
+    Bullet getBullet() {
+        Vector2 bPos = pos + rotate({0,10} , rot);
+        Vector2 bVel = vel + rotate({0,350}, rot);
+
+        return Bullet(bPos, bVel);
     }
 
 };

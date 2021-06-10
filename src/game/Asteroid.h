@@ -77,6 +77,9 @@ public:
     }
 
     vector<Asteroid> split() {
+        if (size <= 1) {
+            return {};
+        }
         Vector2 pos1 = pos;
         Vector2 pos2 = pos;
         Vector2 vel1 = rotate(vel, PI / 12);

@@ -333,4 +333,31 @@ bool polyCircleIntersects(Vector2 center, float radius, vector<Vector2> &poly) {
     return false;
 }
 
+bool circleCircleIntersects(Vector2 c1, float r1, Vector2 c2, float r2) {
+    return mag(c1 - c2) < r1 + r2;
+}
+
+bool pointPolyIntersects(Vector2 p, vector<Vector2> &poly) {
+    Vector2 inf = {0,0};
+    int count = 0;
+    for (unsigned i = 0; i < poly.size(); i++) {
+        Vector2 a1 = poly[i];
+        Vector2 a2 = poly[(i+1)%poly.size()];
+        if (doIntersect(a1,a2,p, inf)) {
+            count++;
+        }
+    }
+    return (count % 2 == 1);
+
+}
+
+bool pointBbIntersects(Vector2 p, BoundingBox bb) {
+    if (p.x >= bb.min.x && p.x <= bb.max.x 
+            && p.y >= bb.min.y && p.y <= bb.max.y) {
+        return true;
+    }
+
+    return false;
+}
+
 #endif  
