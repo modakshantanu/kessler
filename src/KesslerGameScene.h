@@ -26,6 +26,26 @@ extern PauseScene* pauseScene;
 
 extern Scene* curScene, *nextScene; 
 
+struct GameState {
+    int points = 0;
+    int asteroidLimit = 4 * 3;
+    float zoneRadius = 1200;
+    float zoneMaxRadius = 1200;
+    float zoneMinRadius = 600;
+    float shrinkRate = 25;
+    float zoneInc = 100;
+    int curStage = 1;
+    int maxStage = 10;
+    float stageTimeLeft = 30;
+    float stageTotalTime = 30;
+    int bulletLimit = 5;
+    vector<int> asteroidCounts = {0,0,0,0,0};
+    // Max asteroids = curStage + 2
+    // Max Radius = 1300 - curStage * 75 
+};
+
+GameState initialState;
+
 
 class KesslerGameScene: public Scene {
 public:
@@ -34,18 +54,25 @@ public:
     Ship ship;
     Planet planet;
     TextView endText;
+    TextView pointsTV;
+    TextView astCountTV;
+    TextView stageTV;
+    TextView bulletsTV;
+
     vector<Asteroid> asteroids;
     vector<Particle> particles;
     vector<Bullet> bullets;
+    GameState gs;
+
 
     bool isAlive = true;
     bool shipCam = true;
 
-    float curZoom = 1;
-    float targetZoom = 1;
+    float curZoom;
+    float targetZoom;
     float minZoom = 0.25;
     float maxZoom = 4;
-    float zoomStep = 1.023373892; // 2 ^ 1/60
+    float zoomStep = 1.07177346254; 
     float zoomInc = 1.41421356237; // 2 ^ 1/2
 
     KesslerGameScene() {
@@ -55,7 +82,7 @@ public:
 
     void reset() {
         
-        ship.pos = {0,150};
+        ship.pos = {0,250};
         ship.vel = {200,0};
         ship.rot = 0;
         ship.newOrbit();
@@ -66,16 +93,24 @@ public:
         asteroids.clear();
         bullets.clear();
         particles.clear();
-        for (int i = 0; i < 5; i++) {
-            asteroids.push_back(Asteroid());
-            asteroids[i].generateRandom(ship.pos);
-        }
 
+        curZoom = targetZoom = 0.70710678118; // 1/sqrt(2)
         isAlive = true;
         shipCam = true;
 
+
+        gs = initialState;
+
+
         endText = TextView("Game Over. Press R to restart", settings.screenWidth / 2, settings.screenHeight * 0.75, 32, BOTTOM, CENTER, RED);
+        pointsTV = TextView("Points: 0", settings.screenWidth - 5,5, 32, TOP, RIGHT, WHITE);
+        astCountTV = TextView("Asteroid Count: 0/0/0", settings.screenWidth - 5,37 + 5, 24, TOP, RIGHT, WHITE);
+        stageTV = TextView("Stage: 1", settings.screenWidth - 5, 37 + 29 + 5 , 24, TOP, RIGHT, WHITE);
+        bulletsTV = TextView("Bullets: 5", settings.screenWidth - 5, 37 + 29 + 29 + 5, 24, TOP, RIGHT, WHITE);
+
+
     }
+
 
     void collisionHandler() {
         
@@ -96,10 +131,6 @@ public:
         if (isAlive) {
             // Asteroid - ship intersection
             for (unsigned i = 0; i < asteroids.size(); i++) {
-
-                if (asteroids[i].cooldown > 0) {
-                    continue;
-                }
 
                 if (!bbIntersects(bbAsteroids[i], bbShip)) {
                     continue;
@@ -128,6 +159,12 @@ public:
                     isAlive = false;   
                 }
             }
+
+            // Out of range 
+            if (mag(ship.pos - planet.pos) > gs.zoneRadius) {
+                ship.addExplosionParticles(particles);
+                isAlive = false;
+            }
         }
 
 
@@ -141,27 +178,37 @@ public:
                     && polyCircleIntersects(planet.pos, planet.radius, polyAsteroids[i])) {
                 // Collided with planet
                 asteroids[i].collided = true;
-                asteroids[i].addExplosionParticles(particles);  
+                asteroids[i].addExplosionParticles(particles); 
+
             }
 
             // Asteroid - bullet collision
             for (unsigned j = 0; j < bullets.size(); j++) {
                 // printf("Checking asteroid %d, bullet %d\n", i, j);
-                if ( 
-                         pointPolyIntersects(bullets[j].pos, polyAsteroids[i])) {
-                
+                if (pointBbIntersects(bullets[j].pos , bbAsteroids[i]) &&
+                        pointPolyIntersects(bullets[j].pos, polyAsteroids[i])) {
+                    
+                    
                     asteroids[i].collided = true;
 
-                    if (asteroids[i].size > 1) {
-                        auto children1 = asteroids[i].split();
-                        nextAsteroids.insert(nextAsteroids.end(), children1.begin(), children1.end());    
-                    }
+                    
+                    auto children1 = asteroids[i].split();
+                    nextAsteroids.insert(nextAsteroids.end(), children1.begin(), children1.end());    
 
                     asteroids[i].addExplosionParticles(particles);  
                     bullets[j].collided = true;
 
+                    gs.points++;
+                    gs.zoneRadius = min(gs.zoneMaxRadius , gs.zoneRadius + gs.zoneInc);
+
                     // printf("Bullet %d collided with asteroid %d\n", j, i);
                 }
+            }
+
+            // Out of range 
+            if (mag(asteroids[i].pos - planet.pos) > gs.zoneRadius) {
+                asteroids[i].collided = true;
+                asteroids[i].addExplosionParticles(particles);  
             }
 
 
@@ -196,7 +243,7 @@ public:
             // This asteroid survived all possible collisions
             if (!asteroids[i].collided) {
                 nextAsteroids.push_back(asteroids[i]);
-            }
+            } 
         }
 
         asteroids = nextAsteroids;
@@ -208,16 +255,15 @@ public:
             // printf("Checking Bullet with pos %f %f\n", bullets[i].pos.x, bullets[i].pos.y);
             if (circleCircleIntersects(bullets[i].pos, bullets[i].radius, planet.pos, planet.radius)) {
                 bullets[i].collided = true;
-                printf("Bullet %d collided with planet\n",i);
+            }
+            if (mag(bullets[i].pos - planet.pos) > gs.zoneRadius) {
+                bullets[i].collided = true;
             }
 
             if (!bullets[i].collided) {
                 // printf("Bullet %d survived\n", i);
                 nextBullets.push_back(bullets[i]);
-            } else {
-                // printf("Bullet %d collided somewhere\n", i);
-            }
-
+            } 
         }
         bullets = nextBullets;
     }
@@ -242,7 +288,7 @@ public:
 
             if (upKey) {
 
-                ship.vel = ship.vel + rotate(Vector2{1,0}, ship.rot + PI / 2) * 0.5 ; 
+                ship.vel = ship.vel + rotate(Vector2{1,0}, ship.rot + PI / 2) * ship.thrust; 
                 ship.pos += ship.vel  * frameTime;
                 ship.moved = true;
                 particles.push_back(ship.getParticle());
@@ -260,11 +306,9 @@ public:
         if (IsKeyPressed(KEY_C)) {
             shipCam = !shipCam;
         }
-        if (spaceKey) {
-            Vector2 bPos = ship.pos + rotate({0,10} , ship.rot);
-            Vector2 bVel = ship.vel + rotate({0,500}, ship.rot);
-
-
+        if (spaceKey && bullets.size() < (unsigned)gs.bulletLimit) {
+            
+            
             bullets.push_back(ship.getBullet());
 
         }
@@ -279,6 +323,49 @@ public:
         }
     }
 
+    
+    void gameStateUpdate(float frameTime) {
+        
+        if (!isAlive) return;
+
+        gs.stageTimeLeft -= frameTime;
+        
+        gs.asteroidCounts.assign(5,0);
+        for (auto &it: asteroids) {
+            gs.asteroidCounts[it.size]++;
+        }
+        int astCnt = 0;
+        for (int i = 1; i <= 4; i++) {
+            astCnt += pow(2, i - 1) * gs.asteroidCounts[i];
+        }
+
+        if (astCnt <= gs.asteroidLimit - 4) {
+            int size = 3;
+            if (rand() % 10 == 0) size = 4;
+            asteroids.push_back(getRandomAsteroid(ship.pos, gs.zoneRadius, size));
+        }
+        
+
+
+        // Code to move to next stage
+        if (gs.stageTimeLeft < 0) {
+            gs.curStage = min(gs.maxStage , gs.curStage+1);
+            gs.stageTimeLeft = gs.stageTotalTime;
+            gs.zoneMaxRadius -= 75;
+            gs.asteroidLimit = gs.curStage * 4 + 8;
+        }
+
+        gs.zoneRadius -= gs.shrinkRate * frameTime;
+        gs.zoneRadius = max(gs.zoneRadius , gs.zoneMinRadius);
+
+
+        pointsTV.text = "Points: " + to_string(gs.points);
+        astCountTV.text = "Asteroid Count: " + to_string(gs.asteroidCounts[1]) + "/" + to_string(gs.asteroidCounts[2]) + "/" + to_string(gs.asteroidCounts[3]);
+        stageTV.text = "Stage: " + to_string(gs.curStage);
+        bulletsTV.text = "Bullets: " + to_string(gs.bulletLimit - bullets.size());
+
+    }
+
     void update() {
         
         float frameTime = GetFrameTime();
@@ -286,6 +373,8 @@ public:
         // printf("%f\n", frameTime);
 
         inputHandler(frameTime);
+        gameStateUpdate(frameTime);
+
              
         if (ship.moved) {
             ship.moved = false;
@@ -342,8 +431,14 @@ public:
 
     void render() {
         // BeginDrawing();
-        ClearBackground(BLACK);
+        Color dangerZone = {32,0,0,255};
+        ClearBackground(dangerZone);
         BeginMode2D(camera);
+
+
+        // Render background
+        DrawCircle(0,0, gs.zoneRadius, BLACK);
+
         planet.render();
 
         
@@ -364,6 +459,10 @@ public:
 
         EndMode2D();
 
+        pointsTV.render();
+        astCountTV.render();
+        stageTV.render();
+        bulletsTV.render();
         if (!isAlive) {
             endText.render();
         }

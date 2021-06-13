@@ -13,6 +13,7 @@ public:
     vector<Vector2> orbitPoints;
     bool moved = true;
     bool collided = false;
+    float thrust = 0.75;
 
     Ship() {}
     Ship(Vector2 p, Vector2 v) {
@@ -20,7 +21,7 @@ public:
         vel = v;
     }
 
-    void newOrbit(float GM = 4500000) {
+    void newOrbit(float GM = 10000000) {
         
         OrbitalEntity::newOrbit(GM);
         

@@ -8,7 +8,7 @@ class Planet {
 public:
     
     Vector2 pos, vel;
-    double GM = 4500000;
+    double GM = 10000000;
     float radius = 100;
 
     Planet() {}

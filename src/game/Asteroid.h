@@ -28,10 +28,11 @@ public:
         size = s;
     }   
 
-    void generateRandom(Vector2 shipPos, float planetRadius = 150, float GM = 4500000) {
+    void generateRandom(Vector2 shipPos, float zoneRadius) {
+        float GM = 10000000;
         generateShape();
         // Should not spawn too close to player's ship
-        pos = {randBw(250, 400) , 0};
+        pos = {randBw(250, zoneRadius * 0.5) , 0};
         float circularVel = sqrt(GM / pos.x);
         vel = {0, -randBw(circularVel * 0.9, circularVel * 1.20)};
         vel = rotate(vel, randBw(- PI / 8, PI / 8));
@@ -82,8 +83,8 @@ public:
         }
         Vector2 pos1 = pos;
         Vector2 pos2 = pos;
-        Vector2 vel1 = rotate(vel, PI / 12);
-        Vector2 vel2 = rotate(vel, -PI / 12);
+        Vector2 vel1 = rotate(vel, PI / 8);
+        Vector2 vel2 = rotate(vel, -PI / 8);
 
         int newSize = size - 1;
 
@@ -107,7 +108,7 @@ public:
     void generateShape() {
         Vector2 unit = {1,0};
         int vertices = size + 3;
-        float avgRadius = sqrt(50 * (1<<size));
+        float avgRadius = sqrt(75 * (1<<size));
 
         for (float t = 0; t < 2*PI - 0.01; t += 2 * PI / vertices) {
             float d = avgRadius * randBw(0.7, 1.4);
@@ -135,5 +136,12 @@ public:
 
 
 };
+
+Asteroid getRandomAsteroid(Vector2 shipPos, float zoneRadius, int size = 3) {
+    Asteroid a;
+    a.size = size;
+    a.generateRandom(shipPos, zoneRadius);
+    return a;
+}
 
 #endif

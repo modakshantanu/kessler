@@ -14,7 +14,7 @@ public:
 
 
 
-    void newOrbit(float GM = 4500000) {
+    void newOrbit(float GM = 10000000) {
         
         // Zero vector
         // OR Parallel to major axis
