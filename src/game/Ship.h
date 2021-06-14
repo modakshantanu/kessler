@@ -13,14 +13,28 @@ class Ship : public OrbitalEntity {
 public:
     
     vector<Vector2> orbitPoints;
+    vector<Vector2> points = {};
     bool moved = true;
     bool collided = false;
     float thrust = 0.75;
 
-    Ship() {}
+    Ship() {
+        
+        points.push_back({0,13});
+        points.push_back({8,-13});
+        points.push_back({-8, 13});
+                
+    }
     Ship(Vector2 p, Vector2 v) {
         pos = p;
         vel = v;
+
+
+        points.push_back({0,13});
+        points.push_back({8,-13});
+        points.push_back({-8, 13});
+        
+
     }
 
     void newOrbit(float GM = 10000000) {
@@ -47,18 +61,19 @@ public:
         for (auto &it: orbitPoints) {
             DrawCircle(it.x, it.y, 1 / zoomLevel, GRAY);
         }
-
+        
         Vector2 v1 = {0,13};
-        Vector2 v2 = {8,-13};
-        Vector2 v3 = {-8,-13};
+        Vector2 v2 = {8,-8};
+        Vector2 v3 = {-8,-8};
 
         v1 = rotate(v1, rot) + pos;
         v2 = rotate(v2, rot) + pos;
         v3 = rotate(v3, rot) + pos;
 
-        BLUE;
+
         
-        DrawTriangle(v1,v2,v3,shipBlue);
+        DrawTriangle(v1,v2,pos,shipBlue);
+        DrawTriangle(pos,v3,v1,shipBlue);
 
    
     }
@@ -66,8 +81,8 @@ public:
     vector<Vector2> getPoly() {
         vector<Vector2> res;
         Vector2 v1 = {0,13};
-        Vector2 v2 = {8,-13};
-        Vector2 v3 = {-8,-13};
+        Vector2 v2 = {8,-8};
+        Vector2 v3 = {-8,-8};
 
         v1 = rotate(v1, rot) + pos;
         v2 = rotate(v2, rot) + pos;
@@ -80,7 +95,7 @@ public:
         
         float xPos = randBw(-2,2);
 
-        Vector2 pPos = {xPos,-13};
+        Vector2 pPos = {xPos,-5};
         pPos = rotate(pPos, rot) + pos;
         Vector2 pVel = {0, -250};
         pVel = rotate(pVel, rot) + vel;

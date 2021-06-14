@@ -106,12 +106,10 @@ public:
 
         gs = initialState;
 
-
+        float fontSize = settings.screenWidth / 1080.0 * 24;
         endText = TextView("Game Over. Press R to restart", settings.screenWidth / 2, settings.screenHeight * 0.75, 32, BOTTOM, CENTER, RED);
-        pointsTV = TextView("Points: 0", settings.screenWidth - 5,5, 32, TOP, RIGHT, WHITE);
-        astCountTV = TextView("Asteroid Count: 0/0/0", settings.screenWidth - 5,37 + 5, 24, TOP, RIGHT, WHITE);
-        stageTV = TextView("Stage: 1", settings.screenWidth - 5, 37 + 29 + 5 , 24, TOP, RIGHT, WHITE);
-        bulletsTV = TextView("Bullets: 5", settings.screenWidth - 5, 37 + 29 + 29 + 5, 24, TOP, RIGHT, WHITE);
+        pointsTV = TextView("Points: 0", settings.screenWidth - 5,settings.screenHeight * 0.1 + 5, fontSize, TOP, RIGHT, WHITE);
+        stageTV = TextView("Stage: 1", settings.screenWidth - 5, settings.screenHeight * 0.1 + 5 + fontSize + 5 , fontSize, TOP, RIGHT, WHITE);
 
 
         float h = 32 * settings.screenHeight / 1080.0;
@@ -473,11 +471,11 @@ public:
 
         EndMode2D();
 
-        // pointsTV.render();
+        pointsTV.render();
         // astCountTV.render();
         astCount.render();
         
-        // stageTV.render();
+        stageTV.render();
         
         // bulletsTV.render();
         bulletUI.render();

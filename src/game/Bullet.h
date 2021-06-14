@@ -13,7 +13,7 @@ class Bullet : public OrbitalEntity {
 public:
 
     float ttl = 5;
-    float radius = 2;
+    float radius = 3;
     bool collided = false;
 
     Bullet() {}
