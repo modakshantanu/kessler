@@ -13,6 +13,7 @@
 #include "game/Asteroid.h"
 #include "game/Particle.h"
 #include "game/Bullet.h"
+#include "game/BulletUI.h"
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -64,6 +65,8 @@ public:
     vector<Bullet> bullets;
     GameState gs;
 
+    BulletUI bulletUI;
+
 
     bool isAlive = true;
     bool shipCam = true;
@@ -108,6 +111,11 @@ public:
         stageTV = TextView("Stage: 1", settings.screenWidth - 5, 37 + 29 + 5 , 24, TOP, RIGHT, WHITE);
         bulletsTV = TextView("Bullets: 5", settings.screenWidth - 5, 37 + 29 + 29 + 5, 24, TOP, RIGHT, WHITE);
 
+
+        float h = 32 * settings.screenHeight / 1080.0;
+        float x = settings.screenWidth / 2.0 - (gs.bulletLimit*h + gs.bulletLimit * (h-1) * 0.5) / 2.0;
+        float y = settings.screenHeight * 0.9;
+        bulletUI = BulletUI(x, y ,h, gs.bulletLimit);
 
     }
 
@@ -363,6 +371,7 @@ public:
         astCountTV.text = "Asteroid Count: " + to_string(gs.asteroidCounts[1]) + "/" + to_string(gs.asteroidCounts[2]) + "/" + to_string(gs.asteroidCounts[3]);
         stageTV.text = "Stage: " + to_string(gs.curStage);
         bulletsTV.text = "Bullets: " + to_string(gs.bulletLimit - bullets.size());
+        bulletUI.rem = gs.bulletLimit - bullets.size();
 
     }
 
@@ -463,6 +472,7 @@ public:
         astCountTV.render();
         stageTV.render();
         bulletsTV.render();
+        bulletUI.render();
         if (!isAlive) {
             endText.render();
         }
