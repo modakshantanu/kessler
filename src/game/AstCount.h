@@ -49,7 +49,6 @@ public:
         Vector2 l3 = l2 + Vector2{-h/2, -h/2};
         Vector2 l4 = l3 + Vector2{0, -h/2};
 
-        Color dark = {30, 30, 30, 255};
 
         DrawLineEx(l1 , l2, strokeW, WHITE);
         DrawLineEx(l2 , l3, strokeW, WHITE);

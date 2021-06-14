@@ -10,6 +10,8 @@
 using namespace std;
 extern Settings settings;
 
+extern Color bulletDark;
+
 class BulletUI : public UIElement {
 public:
     int total = 5;
@@ -27,22 +29,20 @@ public:
     }
 
     void renderBullet(float cx, float cy, float r) {
-        Color bgColor = {168, 0, 0, 255};
-        DrawCircle(cx, cy, r, bgColor);
+        DrawCircle(cx, cy, r, bulletDark);
     }
 
     void renderEmpty(float cx, float cy, float r) {
-        Color bgColor = {168, 0, 0, 255};
         float strokeWidth = r * 0.1;
-        DrawCircle(cx, cy, r, bgColor);
+        DrawCircle(cx, cy, r, bulletDark);
         DrawCircle(cx, cy, r - strokeWidth, BLACK);
 
         if (IsKeyDown(KEY_SPACE) && rem == 0) {
             Vector2 center = {cx, cy};
             float r2 = r * 0.4;
 
-            DrawLineEx(center + Vector2{r2, r2} , center - Vector2{r2,r2}, strokeWidth * 2, bgColor);
-            DrawLineEx(center + Vector2{r2, -r2} , center - Vector2{r2, -r2}, strokeWidth * 2, bgColor);
+            DrawLineEx(center + Vector2{r2, r2} , center - Vector2{r2,r2}, strokeWidth * 2, bulletDark);
+            DrawLineEx(center + Vector2{r2, -r2} , center - Vector2{r2, -r2}, strokeWidth * 2, bulletDark);
         }
     }
 

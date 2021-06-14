@@ -7,6 +7,8 @@
 #include "Particle.h"
 #include "Bullet.h"
 
+extern Color shipBlue;
+
 class Ship : public OrbitalEntity {
 public:
     
@@ -54,7 +56,9 @@ public:
         v2 = rotate(v2, rot) + pos;
         v3 = rotate(v3, rot) + pos;
 
-        DrawTriangle(v1,v2,v3, BLUE);
+        BLUE;
+        
+        DrawTriangle(v1,v2,v3,shipBlue);
 
    
     }

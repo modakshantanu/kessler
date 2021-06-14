@@ -4,7 +4,10 @@
 #include "raylib.h"
 #include "OrbitalEntity.h"
 #include "physics.h"
+#include "../utils.h"
 using namespace std;
+
+extern Color bulletPurple;
 
 class Bullet : public OrbitalEntity {
 public:
@@ -30,7 +33,7 @@ public:
     }
 
     void render() {
-        DrawCircle(pos.x, pos.y, radius, RED);
+        DrawCircle(pos.x, pos.y, radius, bulletPurple);
     }
 };
 

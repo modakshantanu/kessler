@@ -31,4 +31,8 @@ InstructionsScene* instructionsScene;
 class SettingsScene;
 SettingsScene* settingsScene;
 
+Color shipBlue =  {0, 106, 255, 255};
+Color bulletPurple =  {238, 48, 255, 255};
+Color bulletDark = {180, 31, 194, 255};
+
 #endif
