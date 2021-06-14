@@ -46,9 +46,9 @@ public:
             DrawCircle(it.x, it.y, 1 / zoomLevel, GRAY);
         }
 
-        Vector2 v1 = {0,8};
-        Vector2 v2 = {5,-8};
-        Vector2 v3 = {-5,-8};
+        Vector2 v1 = {0,13};
+        Vector2 v2 = {8,-13};
+        Vector2 v3 = {-8,-13};
 
         v1 = rotate(v1, rot) + pos;
         v2 = rotate(v2, rot) + pos;
@@ -61,9 +61,9 @@ public:
 
     vector<Vector2> getPoly() {
         vector<Vector2> res;
-        Vector2 v1 = {0,8};
-        Vector2 v2 = {5,-8};
-        Vector2 v3 = {-5,-8};
+        Vector2 v1 = {0,13};
+        Vector2 v2 = {8,-13};
+        Vector2 v3 = {-8,-13};
 
         v1 = rotate(v1, rot) + pos;
         v2 = rotate(v2, rot) + pos;
@@ -74,15 +74,15 @@ public:
 
     Particle getParticle() {
         
-        float xPos = randBw(-1,1);
+        float xPos = randBw(-2,2);
 
-        Vector2 pPos = {xPos,-8};
+        Vector2 pPos = {xPos,-13};
         pPos = rotate(pPos, rot) + pos;
         Vector2 pVel = {0, -250};
         pVel = rotate(pVel, rot) + vel;
 
-        Particle p = Particle(pPos, pVel,YELLOW, RED);
-        p.ttl = randBw(0.25,0.5);
+        Particle p = Particle(pPos, pVel,YELLOW, RED,1.5);
+        p.ttl = randBw(0.3, 0.6);
 
         return p;
     }

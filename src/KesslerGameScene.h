@@ -14,6 +14,7 @@
 #include "game/Particle.h"
 #include "game/Bullet.h"
 #include "game/BulletUI.h"
+#include "game/AstCount.h"
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -66,6 +67,7 @@ public:
     GameState gs;
 
     BulletUI bulletUI;
+    AstCount astCount;
 
 
     bool isAlive = true;
@@ -116,6 +118,7 @@ public:
         float x = settings.screenWidth / 2.0 - (gs.bulletLimit*h + gs.bulletLimit * (h-1) * 0.5) / 2.0;
         float y = settings.screenHeight * 0.9;
         bulletUI = BulletUI(x, y ,h, gs.bulletLimit);
+        astCount = AstCount();
 
     }
 
@@ -342,6 +345,7 @@ public:
         for (auto &it: asteroids) {
             gs.asteroidCounts[it.size]++;
         }
+        astCount.counts = gs.asteroidCounts;
         int astCnt = 0;
         for (int i = 1; i <= 4; i++) {
             astCnt += pow(2, i - 1) * gs.asteroidCounts[i];
@@ -349,7 +353,7 @@ public:
 
         if (astCnt <= gs.asteroidLimit - 4) {
             int size = 3;
-            if (rand() % 10 == 0) size = 4;
+            if (rand() % 4 == 0) size = 4;
             asteroids.push_back(getRandomAsteroid(ship.pos, gs.zoneRadius, size));
         }
         
@@ -383,6 +387,7 @@ public:
 
         inputHandler(frameTime);
         gameStateUpdate(frameTime);
+        
 
              
         if (ship.moved) {
@@ -468,11 +473,16 @@ public:
 
         EndMode2D();
 
-        pointsTV.render();
-        astCountTV.render();
-        stageTV.render();
-        bulletsTV.render();
+        // pointsTV.render();
+        // astCountTV.render();
+        astCount.render();
+        
+        // stageTV.render();
+        
+        // bulletsTV.render();
         bulletUI.render();
+
+
         if (!isAlive) {
             endText.render();
         }

@@ -3,7 +3,7 @@
 
 #include "raylib.h"
 #include <bits/stdc++.h>
-#include "utils.h"
+#include "../utils.h"
 #include "../UIElement.h"
 #include "physics.h"
 
@@ -44,10 +44,6 @@ public:
             DrawLineEx(center + Vector2{r2, r2} , center - Vector2{r2,r2}, strokeWidth * 2, bgColor);
             DrawLineEx(center + Vector2{r2, -r2} , center - Vector2{r2, -r2}, strokeWidth * 2, bgColor);
         }
-    }
-
-    void renderX(float cx, float cy, float r) {
-
     }
 
     void render() {
