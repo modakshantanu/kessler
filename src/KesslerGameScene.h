@@ -15,6 +15,7 @@
 #include "game/Bullet.h"
 #include "game/BulletUI.h"
 #include "game/AstCount.h"
+#include "AudioManager.h"
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -27,6 +28,8 @@ class PauseScene;
 extern PauseScene* pauseScene; 
 
 extern Scene* curScene, *nextScene; 
+
+extern AudioManager audio;
 
 struct GameState {
     int points = 0;
@@ -146,7 +149,9 @@ public:
                 }
                 if (polyIntersects(polyAsteroids[i], polyShip)) {
                     ship.addExplosionParticles(particles);
-                    isAlive = false;                    
+                    isAlive = false;   
+                    audio.play(BOOM);                 
+                    printf("Asteroid %d collided with ship\n", i);
                 }
             }
             // Ship - planet intersection
@@ -154,7 +159,8 @@ public:
                     && polyCircleIntersects(planet.pos, planet.radius, polyShip)) {
             
                 ship.addExplosionParticles(particles);
-                isAlive = false;   
+                isAlive = false; 
+                audio.play(BOOM);  
             }
 
             // Ship - bullet
@@ -163,9 +169,10 @@ public:
                         && pointPolyIntersects(bullets[i].pos, polyShip)) {
                 
                     ship.addExplosionParticles(particles);
-                    // printf("Bullet %d collided with ship\n", i);
+                    printf("Bullet %d collided with ship\n", i);
                     bullets[i].collided = true;
                     isAlive = false;   
+                    audio.play(BOOM);
                 }
             }
 
@@ -173,6 +180,8 @@ public:
             if (mag(ship.pos - planet.pos) > gs.zoneRadius) {
                 ship.addExplosionParticles(particles);
                 isAlive = false;
+                audio.play(BOOM);
+                printf("Ship died due to out of range");
             }
         }
 
@@ -188,6 +197,8 @@ public:
                 // Collided with planet
                 asteroids[i].collided = true;
                 asteroids[i].addExplosionParticles(particles); 
+                audio.play(POP);
+
 
             }
 
@@ -210,6 +221,8 @@ public:
                     gs.points++;
                     gs.zoneRadius = min(gs.zoneMaxRadius , gs.zoneRadius + gs.zoneInc);
 
+                    audio.play(POP);
+
                     // printf("Bullet %d collided with asteroid %d\n", j, i);
                 }
             }
@@ -217,7 +230,9 @@ public:
             // Out of range 
             if (mag(asteroids[i].pos - planet.pos) > gs.zoneRadius) {
                 asteroids[i].collided = true;
-                asteroids[i].addExplosionParticles(particles);  
+                asteroids[i].addExplosionParticles(particles);
+                audio.play(POP);
+
             }
 
 
@@ -244,13 +259,15 @@ public:
 
                     asteroids[i].addExplosionParticles(particles);  
                     asteroids[j].addExplosionParticles(particles);    
+
+                    audio.play(POP);
                 }
             }
 
             noCollisions:
 
             // This asteroid survived all possible collisions
-            if (!asteroids[i].collided) {
+            if (!asteroids[i].collided && asteroids[i].size >= 1) {
                 nextAsteroids.push_back(asteroids[i]);
             } 
         }
@@ -286,6 +303,8 @@ public:
         bool zoomInKey = IsKeyPressed(KEY_E);
         bool zoomOutKey = IsKeyPressed(KEY_Q);
 
+        bool crosshairKey = IsKeyPressed(KEY_X);
+
 
         if (isAlive) { // Ship-related actions that must only happen if player is alive
             if (leftKey) {
@@ -304,6 +323,9 @@ public:
                 particles.push_back(ship.getParticle());
 
             }
+            if (crosshairKey) {
+                ship.crossHair = !ship.crossHair; 
+            }
         }
 
         if (zoomInKey) {
@@ -317,7 +339,7 @@ public:
         }
         if (spaceKey && bullets.size() < (unsigned)gs.bulletLimit) {
             
-            
+            audio.play(BULLET);
             bullets.push_back(ship.getBullet());
 
         }

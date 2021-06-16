@@ -8,6 +8,7 @@
 #include "Bullet.h"
 
 extern Color shipBlue;
+extern Color crossHairPurple;
 
 class Ship : public OrbitalEntity {
 public:
@@ -15,6 +16,7 @@ public:
     vector<Vector2> orbitPoints;
     vector<Vector2> points = {};
     bool moved = true;
+    bool crossHair = true;
     bool collided = false;
     float thrust = 0.75;
 
@@ -75,6 +77,25 @@ public:
         DrawTriangle(v1,v2,pos,shipBlue);
         DrawTriangle(pos,v3,v1,shipBlue);
 
+        if (!crossHair) {
+            return;
+        }
+        // Draw crosshair
+
+        Vector2 v4 = {0, 60};
+        Vector2 v5 = v4 + Vector2{5,5};
+        Vector2 v6 = v4 + Vector2{-5,-5};
+        Vector2 v7 = v4 + Vector2{5,-5};
+        Vector2 v8 = v4 + Vector2{-5,5};
+
+        v5 = rotate(v5, rot) + pos;
+        v6 = rotate(v6, rot) + pos;
+        v7 = rotate(v7, rot) + pos;
+        v8 = rotate(v8, rot) + pos;
+
+        float strokeWidth = 2;
+        DrawLineEx(v5, v6, strokeWidth, crossHairPurple);
+        DrawLineEx(v7, v8, strokeWidth, crossHairPurple);
    
     }
 

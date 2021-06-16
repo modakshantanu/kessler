@@ -7,11 +7,13 @@
 #include "UIElement.h"
 #include "mathutils.h"
 #include "utils.h"
+#include "AudioManager.h"
 #include <bits/stdc++.h>
 
 using namespace std;
 
 extern float uiScale;
+extern AudioManager audio;
 
 void doNothing() {}
 
@@ -79,6 +81,7 @@ public:
         
         bool intersects = button.intersects(mouseX, mouseY); 
         if (pressed && intersects) {
+            // audio.playButtonClick();
             button.isPressed = true;
         } else if (released && button.isPressed) {
             button.onClick();

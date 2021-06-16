@@ -8,6 +8,7 @@ using namespace std;
 struct Settings {
     int screenWidth;
     int screenHeight;
+    bool audioFx = true;
 };
 
 
@@ -17,6 +18,8 @@ string toString(Settings &settings) {
     res += to_string(settings.screenWidth);
     res += "\nSCREENHEIGHT ";
     res += to_string(settings.screenHeight);
+    res += "\nFX ";
+    res += settings.audioFx ? "T":"F";
     res += "\n";
     return res;
 }
@@ -31,7 +34,10 @@ void saveSettings(string filename, Settings s) {
 
 Settings loadSettings(std::string filename) {
     
-    Settings result = {1280, 720};
+    Settings result;
+    result.screenHeight = 720;
+    result.screenWidth = 1080;
+    result.audioFx = true;
 
     ifstream file(filename);
     string line;    
@@ -48,6 +54,7 @@ Settings loadSettings(std::string filename) {
             if (str>>value) {
                 if (key == "SCREENWIDTH") result.screenWidth = stoi(value);
                 if (key == "SCREENHEIGHT") result.screenHeight = stoi(value);
+                if (key == "FX") result.audioFx = value == "T" ? true: false;
             } else {
                 corrupted = true;
             }
@@ -57,7 +64,7 @@ Settings loadSettings(std::string filename) {
     } else {
         corrupted = true;
     }
-    if (idx != 2) corrupted = true;
+    if (idx != 3) corrupted = true;
 
     if (corrupted) {
         saveSettings(filename,result);

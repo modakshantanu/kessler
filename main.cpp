@@ -8,6 +8,7 @@
 #include "src/InstructionsScene.h"
 #include "src/SettingsScene.h"
 #include "src/KesslerGameScene.h"
+#include "src/AudioManager.h"
 
 #include "src/Settings.h"
 
@@ -27,6 +28,8 @@ extern SettingsScene* settingsScene;
 extern Scene* curScene, *nextScene; 
 extern Settings settings;
 
+extern AudioManager audio;
+
 int main() {
 
     srand(time(NULL));
@@ -37,6 +40,8 @@ int main() {
     // screenHeight = 1080;
 
     InitWindow(settings.screenWidth, settings.screenHeight, "Kessler");
+    audio.init();
+    
 
     SetTargetFPS(60);            
     SetExitKey(KEY_NULL);
