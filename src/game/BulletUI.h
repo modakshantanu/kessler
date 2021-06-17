@@ -24,6 +24,7 @@ public:
         x = xx;
         y = yy; 
         height = hh;
+        
         total = tot;
         width = height * tot * 1.5 - height * 0.5;
     }

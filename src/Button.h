@@ -81,9 +81,10 @@ public:
         
         bool intersects = button.intersects(mouseX, mouseY); 
         if (pressed && intersects) {
-            // audio.playButtonClick();
+            audio.play(BTNDOWN);
             button.isPressed = true;
         } else if (released && button.isPressed) {
+            audio.play(BTNUP);
             button.onClick();
         }
         if (!intersects || !down) {

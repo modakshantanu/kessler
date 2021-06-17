@@ -116,6 +116,7 @@ public:
 
 
         float h = 32 * settings.screenHeight / 1080.0;
+        h = max(32.0f, h);
         float x = settings.screenWidth / 2.0 - (gs.bulletLimit*h + gs.bulletLimit * (h-1) * 0.5) / 2.0;
         float y = settings.screenHeight * 0.9;
         bulletUI = BulletUI(x, y ,h, gs.bulletLimit);
@@ -321,12 +322,17 @@ public:
                 ship.moved = true;
                 particles.push_back(ship.getParticle());
                 particles.push_back(ship.getParticle());
-
+                audio.boostOn();
+            } else {
+                audio.boostOff();
             }
             if (crosshairKey) {
                 ship.crossHair = !ship.crossHair; 
             }
+        } else {
+            audio.boostOff();
         }
+        
 
         if (zoomInKey) {
             targetZoom = max(minZoom, targetZoom / zoomInc);
@@ -342,6 +348,8 @@ public:
             audio.play(BULLET);
             bullets.push_back(ship.getBullet());
 
+        } else if (spaceKey && bullets.size() == (unsigned)gs.bulletLimit) {
+            audio.play(EMPTY);
         }
 
         
@@ -365,6 +373,7 @@ public:
         for (auto &it: asteroids) {
             gs.asteroidCounts[it.size]++;
         }
+        astCount.update(frameTime);
         astCount.counts = gs.asteroidCounts;
         int astCnt = 0;
         for (int i = 1; i <= 4; i++) {
