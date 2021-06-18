@@ -90,7 +90,7 @@ public:
         for (auto &e: buttons) {
             e.render();
         }
-        DrawFPS(10, 10);
+        // DrawFPS(10, 10);
     }
 };
 

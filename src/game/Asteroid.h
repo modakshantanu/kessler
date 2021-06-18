@@ -3,6 +3,7 @@
 
 #include "raylib.h"
 #include "OrbitalEntity.h"
+#include "Particle.h"
 #include "physics.h"
 using namespace std;
 

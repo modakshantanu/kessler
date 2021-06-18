@@ -515,7 +515,7 @@ public:
         if (!isAlive) {
             endText.render();
         }
-        DrawFPS(10, 10);
+        // DrawFPS(10, 10);
         // EndDrawing();
     }
 };

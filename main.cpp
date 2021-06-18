@@ -33,7 +33,7 @@ extern AudioManager audio;
 int main() {
 
     srand(time(NULL));
-    debug = true;
+    debug = false;
 
     settings = loadSettings("kessler_settings.txt");
     // screenWidth = 1920;

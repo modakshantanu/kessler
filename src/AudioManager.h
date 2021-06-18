@@ -46,6 +46,9 @@ public:
     //     PlaySoundMulti(bullet);
     // }
     void boostOn() {
+
+        if (!settings.audioFx) return;
+        
         if (!IsSoundPlaying(boost)) PlaySound(boost);
         if (boostVol == 0) boostVol = 0.01;
 

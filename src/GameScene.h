@@ -121,7 +121,7 @@ public:
 
         DrawCircleV(ball, 8, BLUE);
         EndMode2D();
-        DrawFPS(10, 10);
+        // DrawFPS(10, 10);
         // EndDrawing();
     }
 };
