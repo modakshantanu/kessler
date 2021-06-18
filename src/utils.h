@@ -20,6 +20,9 @@ Settings settings;
 class MainMenu;
 MainMenu* mainMenu;
 
+class ResScene;
+ResScene* resScene;
+
 class KesslerGameScene;
 KesslerGameScene* gameScene;
 

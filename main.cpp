@@ -3,13 +3,13 @@
 #include "raylib.h"
 #include "src/utils.h"
 #include "src/Scene.h"
+#include "src/KesslerGameScene.h"
 #include "src/MainMenu.h"
 #include "src/PauseScene.h"
 #include "src/InstructionsScene.h"
 #include "src/SettingsScene.h"
-#include "src/KesslerGameScene.h"
 #include "src/AudioManager.h"
-
+#include "src/ResScene.h"
 #include "src/Settings.h"
 
 namespace Win {
@@ -24,6 +24,9 @@ extern PauseScene* pauseScene;
 extern MainMenu* mainMenu;
 extern InstructionsScene* instructionsScene;
 extern SettingsScene* settingsScene;
+extern ResScene* resScene;
+
+
 
 extern Scene* curScene, *nextScene; 
 extern Settings settings;
@@ -47,13 +50,13 @@ int main() {
 
     SetTargetFPS(60);            
     SetExitKey(KEY_NULL);
-    SetConfigFlags(FLAG_VSYNC_HINT);
 
     mainMenu = new MainMenu();
     gameScene = new KesslerGameScene();
     pauseScene = new PauseScene();
     settingsScene = new SettingsScene();
     instructionsScene = new InstructionsScene();
+    resScene = new ResScene();
 
 
     curScene = mainMenu;

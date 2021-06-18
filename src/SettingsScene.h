@@ -6,6 +6,7 @@
 #include "TextView.h"
 #include "Button.h"
 #include "OptionsView.h"
+#include "utils.h"
 #include <bits/stdc++.h>
 
 extern float uiScale;
@@ -14,6 +15,8 @@ extern Settings settings;
 
 extern MainMenu* mainMenu;
 
+class ResScene;
+extern ResScene* resScene;
 
 class SettingsScene : public Scene {
 public:
@@ -44,10 +47,10 @@ public:
 
 
         resView = OptionsView("Resolution: ", centerX - 400, 300);
-        restartNotif = TextView("Requires Restart", centerX - 400, 310, 20, TOP, LEFT, RED);
 
-        fullscreenView = OptionsView("Fullscreen:", centerX - 400, 390);
-        fxView = OptionsView("Sound Effects:", centerX - 400, 450);
+
+        fullscreenView = OptionsView("Fullscreen:", centerX - 400, 360);
+        fxView = OptionsView("Sound Effects:", centerX - 400, 420);
 
 
         std::vector<std::string> resolutions = getResOptions();
@@ -80,7 +83,7 @@ public:
             settings.screenWidth = dim.first;
             settings.screenHeight = dim.second;
             saveSettings("kessler_settings.txt", settings);
-
+            nextScene = (Scene*) resScene;
         };
 
         fxView.onChange = [](std::string id) {
@@ -130,7 +133,6 @@ public:
         ClearBackground(BLACK);
         backButton.render();
         title.render();
-        restartNotif.render();
 
 
         resView.render();

@@ -92,7 +92,7 @@ public:
     void resetBg() {
         planet = Planet({0,0}, {0,0});
         asteroids.clear();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 8; i++) {
             asteroids.push_back(getRandomAsteroid({150,0}, 800));
         }
 
