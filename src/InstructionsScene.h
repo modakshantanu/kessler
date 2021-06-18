@@ -31,7 +31,21 @@ public:
         };
 
         textViews.push_back(TextView("Instructions" , centerX , 85, 64 * uiScale, BOTTOM, CENTER));
-        textViews.push_back(TextView("Just a simple game of pong. Use A/D to control left and Arrow keys to control right", centerX - 300, 150, 24, TOP, LEFT, WHITE, 600));
+        textViews.push_back(TextView("Controls", centerX - 300, 150, 32, TOP, LEFT, BLUE, 600));
+        textViews.push_back(TextView("A/D or Left/Right Arrow Keys -> Steer the Ship ", centerX - 300, 195, 24, TOP, LEFT, WHITE, 600));
+        textViews.push_back(TextView("W or Up Arrow -> Boost ", centerX - 300, 224, 24, TOP, LEFT, WHITE, 600));
+        textViews.push_back(TextView("Space -> Shoot ", centerX - 300, 253, 24, TOP, LEFT, WHITE, 600));
+        textViews.push_back(TextView("Q/E -> Zoom in/out", centerX - 300, 282, 24, TOP, LEFT, WHITE, 600));
+        textViews.push_back(TextView("C -> Toggle Camera Focus, x -> Toggle Crosshair", centerX - 300, 311, 24, TOP, LEFT, WHITE, 600));
+
+
+        textViews.push_back(TextView("Gameplay", centerX - 300, 350, 32, TOP, LEFT, BLUE, 600));
+        textViews.push_back(TextView("Shoot as many asteroids as you can and dont die!", centerX - 300, 395, 24, TOP, LEFT, WHITE, 600));
+        textViews.push_back(TextView("You die if you hit the planet, any bullet or asteroid, or go into the red zone.", centerX - 300, 429, 24, TOP, LEFT, WHITE, 600));
+        textViews.push_back(TextView("The number of asteroids will slowly increase and the zone will shrink as the game progresses.", centerX - 300, 500, 24, TOP, LEFT, WHITE, 600));
+        textViews.push_back(TextView("Use ammo wisely! You can only have 5 bullets active at any time.", centerX - 300, 570, 24, TOP, LEFT, WHITE, 600));
+        textViews.push_back(TextView("All objects follow proper orbital paths, so movement can be a bit counterintuitive.", centerX - 300, 640, 24, TOP, LEFT, WHITE, 600));
+        
 
     }
 
