@@ -20,8 +20,11 @@ public:
     TextView title;
     TextView restartNotif;
     TextButton backButton;
-    vector<OptionButton> opts;
-    OptionsView optView;
+    
+    OptionsView resView;
+    OptionsView fxView;
+    OptionsView fullscreenView;
+
 
     SettingsScene() {
 
@@ -40,24 +43,61 @@ public:
 
 
 
-        optView = OptionsView("Resolution: ", centerX - 400, 300);
+        resView = OptionsView("Resolution: ", centerX - 400, 300);
         restartNotif = TextView("Requires Restart", centerX - 400, 310, 20, TOP, LEFT, RED);
+
+        fullscreenView = OptionsView("Fullscreen:", centerX - 400, 390);
+        fxView = OptionsView("Sound Effects:", centerX - 400, 450);
+
 
         std::vector<std::string> resolutions = getResOptions();
         for (auto &s: resolutions) {
-            optView.addOption(s);
+            resView.addOption(s);
             if (parseRes(s) == std::pair<int,int>({settings.screenWidth, settings.screenHeight})) {
-                optView.setSelected(s);
+                resView.setSelected(s);
             }
         } 
-        
-        optView.onChange = [](std::string id) {
+
+
+        fxView.addOption("On");
+        fxView.addOption("Off");
+        if (settings.audioFx) {
+            fxView.setSelected("On");
+        } else {
+            fxView.setSelected("Off");
+        }
+
+        fullscreenView.addOption("On");
+        fullscreenView.addOption("Off");
+        if (settings.fullScreen) {
+            fullscreenView.setSelected("On");
+        } else {
+            fullscreenView.setSelected("Off");
+        }
+
+        resView.onChange = [](std::string id) {
             auto dim = parseRes(id);
             settings.screenWidth = dim.first;
             settings.screenHeight = dim.second;
             saveSettings("kessler_settings.txt", settings);
 
         };
+
+        fxView.onChange = [](std::string id) {
+            if (id == "On") settings.audioFx = true;
+            else settings.audioFx = false;
+            saveSettings("kessler_settings.txt", settings);
+        };
+
+        fullscreenView.onChange = [](std::string id) {
+            if (id == "On") settings.fullScreen = true;
+            else settings.fullScreen = false;
+            saveSettings("kessler_settings.txt", settings);
+            bool isFullscreen = IsWindowFullscreen();
+            if (isFullscreen != settings.fullScreen) {
+                ToggleFullscreen();
+            }
+        }; 
 
     }
 
@@ -72,7 +112,9 @@ public:
         int mouseDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
         TextButton::buttonStateHandler(backButton, mouseX, mouseY, mouseUp, mouseDown, mousePressed, mouseReleased);
         
-        optView.update();
+        resView.update();
+        fxView.update();
+        fullscreenView.update();
 
         bool esc = IsKeyPressed(KEY_ESCAPE);
         if (esc) {
@@ -89,11 +131,11 @@ public:
         backButton.render();
         title.render();
         restartNotif.render();
-        for (auto &e: opts) {
-            e.render();
-        }
 
-        optView.render();
+
+        resView.render();
+        fxView.render();
+        fullscreenView.render();
     }
 };
 

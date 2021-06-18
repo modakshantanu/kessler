@@ -41,7 +41,9 @@ int main() {
 
     InitWindow(settings.screenWidth, settings.screenHeight, "Kessler");
     audio.init();
-    
+
+
+    if (IsWindowFullscreen() != settings.fullScreen) ToggleFullscreen();
 
     SetTargetFPS(60);            
     SetExitKey(KEY_NULL);
