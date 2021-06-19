@@ -1,9 +1,9 @@
 
 
 #include "raylib.h"
+#include "src/KesslerGameScene.h"
 #include "src/utils.h"
 #include "src/Scene.h"
-#include "src/KesslerGameScene.h"
 #include "src/MainMenu.h"
 #include "src/PauseScene.h"
 #include "src/InstructionsScene.h"

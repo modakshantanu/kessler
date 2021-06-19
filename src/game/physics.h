@@ -360,4 +360,29 @@ bool pointBbIntersects(Vector2 p, BoundingBox bb) {
     return false;
 }
 
+
+bool lineCircleIntersects(Vector2 start, Vector2 end, Vector2 cx, float r) {
+    float d = dot(end - start,cx - start) / mag(end - start);
+
+    Vector2 proj = start +  unit(end - start) * d;
+    if (mag(proj - cx) > r) return false;
+
+    if (proj.x > start.x && proj.x > end.x) return false; 
+    if (proj.x < start.x && proj.x < end.x) return false;
+    return true;
+}
+
+bool circlePolyIntersects(vector<Vector2> &poly, Vector2 cx, float r) {
+    if (pointPolyIntersects(cx, poly)) return true;
+
+    for (unsigned i = 0; i < poly.size(); i++) {
+        Vector2 start = poly[i];
+        Vector2 end = poly[(i+1)%poly.size()];
+
+        if (lineCircleIntersects(start,end, cx, r)) return true;
+    }
+
+    return false;
+}
+
 #endif  

@@ -1,5 +1,5 @@
-#ifndef GAMESCENE_H
-#define GAMESCENE_H
+#ifndef KESSLERGAMESCENE_H
+#define KESSLERGAMESCENE_H
 
 #include "raylib.h"
 #include "mathutils.h"
@@ -166,8 +166,7 @@ public:
 
             // Ship - bullet
             for (unsigned i = 0; i < bullets.size(); i++) {
-                if (pointBbIntersects(bullets[i].pos, bbShip)
-                        && pointPolyIntersects(bullets[i].pos, polyShip)) {
+                if (circlePolyIntersects(polyShip, bullets[i].pos, bullets[i].radius)) {
                 
                     ship.addExplosionParticles(particles);
                     printf("Bullet %d collided with ship\n", i);
@@ -206,8 +205,7 @@ public:
             // Asteroid - bullet collision
             for (unsigned j = 0; j < bullets.size(); j++) {
                 // printf("Checking asteroid %d, bullet %d\n", i, j);
-                if (pointBbIntersects(bullets[j].pos , bbAsteroids[i]) &&
-                        pointPolyIntersects(bullets[j].pos, polyAsteroids[i])) {
+                if (circlePolyIntersects(polyAsteroids[i], bullets[j].pos, bullets[j].radius)) {
                     
                     
                     asteroids[i].collided = true;
