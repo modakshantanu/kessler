@@ -38,9 +38,10 @@ void saveSettings(string filename, Settings s) {
 Settings loadSettings(std::string filename) {
     
     Settings result;
-    result.screenHeight = 720;
-    result.screenWidth = 1080;
+    result.screenHeight = GetMonitorHeight(0);
+    result.screenWidth = GetMonitorWidth(0);
     result.audioFx = true; 
+    result.fullScreen = true;
 
     ifstream file(filename);
     string line;    
