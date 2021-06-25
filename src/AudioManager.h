@@ -25,15 +25,15 @@ public:
     float boostVol = 0;
     void init() {
         InitAudioDevice();
-        bullet = LoadSound("res/bullet_sound.wav");
-        pop = LoadSound("res/pop.wav");
-        empty = LoadSound("res/empty.wav");
-        boom = LoadSound("res/boom.wav");
+        bullet = LoadSound("res/bullet_sound.mp3");
+        pop = LoadSound("res/pop.mp3");
+        empty = LoadSound("res/empty.mp3");
+        boom = LoadSound("res/boom.mp3");
 
-        btnDown = LoadSound("res/buttondown.wav");
-        btnUp = LoadSound("res/buttonup.wav");
+        btnDown = LoadSound("res/buttondown.mp3");
+        btnUp = LoadSound("res/buttonup.mp3");
         
-        boost = LoadSound("res/boost.wav");
+        boost = LoadSound("res/boost.mp3");
         SetSoundVolume(boost, 0);
         if (boost.sampleCount) PlaySound(boost);
     }
